@@ -9,11 +9,28 @@ import Cocomo2Form from "./cocomo2/Cocomo2Form";
 import ModelSelector from "./ModelSelector";
 import { CocomoResults } from "@/utils/cocomoCalculations";
 
+const CocomoResultsKey = "CocomoResults";
+
 export default function CocomoCalculator() {
   const { modelType } = useParams<{ modelType: string }>();
   const navigate = useNavigate();
-  
+
   const [results, setResults] = useState<CocomoResults | null>(null);
+
+  const [listResults, setListResults] = useState<CocomoResults[]>([]);
+
+  useEffect(() => {
+    // Load previous results from localStorage
+    const storedResults = localStorage.getItem(CocomoResultsKey);
+    if (storedResults) {
+      setListResults(JSON.parse(storedResults));
+    }
+  }
+  , []);
+
+  useEffect(() => {
+    localStorage.setItem(CocomoResultsKey, JSON.stringify(listResults));
+  }, [listResults]);
   
   useEffect(() => {
     // Validate that the model type is valid
@@ -22,6 +39,15 @@ export default function CocomoCalculator() {
       toast.error("Invalid model type selected");
     }
   }, [modelType, navigate]);
+
+  const addResult = (newResult: CocomoResults) => {
+    setListResults([...listResults, newResult]);
+  };
+
+  const clearResults = () => {
+    setListResults([]);
+    localStorage.removeItem(CocomoResultsKey);
+  }
   
   if (modelType !== "cocomo81" && modelType !== "cocomo2") {
     return <div>Loading...</div>;
@@ -49,21 +75,24 @@ export default function CocomoCalculator() {
               <ModelSelector modelType={modelType} />
             </CardContent>
           </Card>
-          
-          <div className="lg:col-span-2">
-            {results && <ResultsDisplay results={results} showStages={false} />}
-          </div>
-        </div>
-        
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+          {/* Card de Conductores de coste */}
           <div className="lg:col-span-2">
             {modelType === "cocomo81" && (
               <Cocomo81Form setResults={setResults} showOnlyCostDrivers={true} />
             )}
           </div>
           
-          <div>
-            {results && <ResultsDisplay results={results} showOnlyStages={true} />}
+        </div>
+        
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+          {/* Card de Resultados */}
+          <div className="lg:col-span-1">
+            {results && <ResultsDisplay results={results} showStages={false} addResult={addResult} clearResults={clearResults}/>}
+          </div>
+          
+          <div className="lg:col-span-2">
+            {/* Card de Etapas */}
+            {results && <ResultsDisplay results={results} showOnlyStages={true} listResults={listResults} />}
           </div>
         </div>
       </div>
