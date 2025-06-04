@@ -13,10 +13,11 @@ interface ModelCardProps {
 export default function ModelCard({ title, description, imageUrl, modelType }: ModelCardProps) {
   return (
     <Card className="card-hover overflow-hidden">
-      <div 
+      {/* <div 
         className="h-32 bg-cover bg-center"
         style={{ backgroundImage: `url(${imageUrl})` }}
-      />
+      /> */}
+        <Link to={`/calculator/${modelType}`}>
       <CardHeader>
         <CardTitle>{title}</CardTitle>
         <CardDescription>{description}</CardDescription>
@@ -24,19 +25,19 @@ export default function ModelCard({ title, description, imageUrl, modelType }: M
       <CardContent className="text-sm text-muted-foreground">
         {modelType === "cocomo81" ? (
           <p>
-            The original COCOMO model for software cost estimation. Best for small to medium-sized projects with standard development processes.
+            El modelo COCOMO original para la estimación de costos de software. Ideal para proyectos pequeños y medianos con procesos de desarrollo estándar.
           </p>
         ) : (
           <p>
-            The enhanced version with additional parameters for modern software development. Suitable for complex projects with varied development methodologies.
+            La versión mejorada con parámetros adicionales para el desarrollo de software moderno. Ideal para proyectos complejos con diversas metodologías de desarrollo.
           </p>
         )}
       </CardContent>
       <CardFooter>
         <Button asChild className="w-full">
-          <Link to={`/calculator/${modelType}`}>Select Model</Link>
         </Button>
       </CardFooter>
+          </Link>
     </Card>
   );
 }

@@ -15,7 +15,7 @@ interface CostDriverSelectProps {
   onValueChange: (driverId: string, selectedIndex: number) => void;
 }
 
-const levelLabels = ["Very Low", "Low", "Nominal", "High", "Very High", "Extra High"];
+const levelLabels = ["Muy bajo", "Bajo", "Nominal", "Alto", "Muy alto", "Extra alto"];
 
 export default function CostDriverSelect({ driver, onValueChange }: CostDriverSelectProps) {
   const getSelectValue = () => {

@@ -19,10 +19,10 @@ export default function ModelSelector({ modelType }: ModelSelectorProps) {
         onClick={() => navigate("/documentation")}
       >
         <FileText className="h-4 w-4" />
-        Documentation
+        Documentación
       </Button>
       <Button variant="outline" size="sm" onClick={() => navigate("/")}>
-        Change Model
+        Cambiar modelo
       </Button>
     </div>
   );

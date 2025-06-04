@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import Header from "@/components/Header";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -12,9 +11,9 @@ export default function Documentation() {
       <Header />
       <main className="container max-w-4xl mx-auto py-8 px-4">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2">COCOMO Models Documentation</h1>
+          <h1 className="text-3xl font-bold mb-2">Documentación de Modelos COCOMO</h1>
           <p className="text-muted-foreground max-w-3xl">
-            Learn about the Constructive Cost Models (COCOMO) used for software project estimation.
+            Aprende sobre los Modelos Constructivos de Coste (COCOMO) utilizados para la estimación de proyectos de software.
           </p>
         </div>
         
@@ -27,37 +26,37 @@ export default function Documentation() {
           <TabsContent value="cocomo81" className="space-y-6">
             <Card>
               <CardHeader>
-                <CardTitle>COCOMO 81 Model</CardTitle>
+                <CardTitle>Modelo COCOMO 81</CardTitle>
                 <CardDescription>
-                  The original Constructive Cost Model developed by Barry Boehm in 1981
+                  El modelo constructivo original desarrollado por Barry Boehm en 1981
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                <h3 className="text-lg font-medium">Overview</h3>
+                <h3 className="text-lg font-medium">Resumen</h3>
                 <p>
-                  COCOMO (Constructive Cost Model) is a regression model based on lines of code (LOC), 
-                  used to estimate the cost, effort, and schedule of software projects. It was developed by 
-                  Barry Boehm in 1981 and is one of the most widely used software estimation models.
+                  COCOMO (Constructive Cost Model) es un modelo de regresión basado en líneas de código (LOC), 
+                  utilizado para estimar el coste, esfuerzo y cronograma de proyectos de software. Fue desarrollado 
+                  por Barry Boehm en 1981 y es uno de los modelos de estimación de software más utilizados.
                 </p>
                 
-                <h3 className="text-lg font-medium">Development Modes</h3>
+                <h3 className="text-lg font-medium">Modos de Desarrollo</h3>
                 <ul className="list-disc pl-6 space-y-2">
                   <li>
-                    <strong>Organic Mode:</strong> Small teams with good experience working with less rigid requirements.
+                    <strong>Modo Orgánico:</strong> Equipos pequeños con buena experiencia trabajando con requisitos poco rígidos.
                   </li>
                   <li>
-                    <strong>Semi-detached Mode:</strong> Medium teams with mixed experience working with a mix of rigid and less rigid requirements.
+                    <strong>Modo Semi-acoplado:</strong> Equipos medianos con experiencia mixta trabajando con una mezcla de requisitos rígidos y flexibles.
                   </li>
                   <li>
-                    <strong>Embedded Mode:</strong> Projects developed within a set of tight constraints (hardware, software, operational, etc.).
+                    <strong>Modo Empotrado:</strong> Proyectos desarrollados con un conjunto de restricciones estrictas (hardware, software, operativas, etc.).
                   </li>
                 </ul>
                 
-                <h3 className="text-lg font-medium">Basic Formula</h3>
+                <h3 className="text-lg font-medium">Fórmula Básica</h3>
                 <div className="bg-gray-100 p-4 rounded-md font-mono text-sm">
-                  <p>Effort = a × (KLOC)<sup>b</sup></p>
-                  <p>Time = c × (Effort)<sup>d</sup></p>
-                  <p>Where a, b, c, d are constants based on the development mode</p>
+                  <p>Esfuerzo = a × (KLOC)<sup>b</sup></p>
+                  <p>Tiempo = c × (Esfuerzo)<sup>d</sup></p>
+                  <p>Donde a, b, c, d son constantes según el modo de desarrollo</p>
                 </div>
               </CardContent>
             </Card>
@@ -66,45 +65,45 @@ export default function Documentation() {
           <TabsContent value="cocomo2" className="space-y-6">
             <Card>
               <CardHeader>
-                <CardTitle>COCOMO II Model</CardTitle>
+                <CardTitle>Modelo COCOMO II</CardTitle>
                 <CardDescription>
-                  An updated version of the COCOMO model to address software development practices of the 1990s and 2000s
+                  Una versión actualizada del modelo COCOMO que aborda las prácticas de desarrollo de software de los años 90 y 2000
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                <h3 className="text-lg font-medium">Overview</h3>
+                <h3 className="text-lg font-medium">Resumen</h3>
                 <p>
-                  COCOMO II is an updated version of the original COCOMO model, designed to address software 
-                  development practices in the 1990s and 2000s. It supports different approaches to software 
-                  development, reuse-driven approaches, and the effects of software turmoil.
+                  COCOMO II es una versión actualizada del modelo COCOMO original, diseñada para abordar las prácticas 
+                  de desarrollo de software en los años 90 y 2000. Soporta diferentes enfoques de desarrollo, 
+                  desarrollo orientado a reutilización y los efectos del cambio constante en el software.
                 </p>
                 
-                <h3 className="text-lg font-medium">Sub-models</h3>
+                <h3 className="text-lg font-medium">Submodelos</h3>
                 <ul className="list-disc pl-6 space-y-2">
                   <li>
-                    <strong>Application Composition Model:</strong> Used for projects built with modern GUI builders.
+                    <strong>Modelo de Composición de Aplicaciones:</strong> Utilizado para proyectos construidos con herramientas modernas de interfaces gráficas.
                   </li>
                   <li>
-                    <strong>Early Design Model:</strong> Used to explore architectural alternatives or incremental development strategies.
+                    <strong>Modelo de Diseño Temprano:</strong> Utilizado para explorar alternativas arquitectónicas o estrategias de desarrollo incremental.
                   </li>
                   <li>
-                    <strong>Post-Architecture Model:</strong> Used when the project is ready to develop and sustain a software product.
+                    <strong>Modelo Post-Arquitectura:</strong> Utilizado cuando el proyecto ya está listo para desarrollar y mantener un producto de software.
                   </li>
                 </ul>
                 
-                <h3 className="text-lg font-medium">Scale Factors and Cost Drivers</h3>
+                <h3 className="text-lg font-medium">Factores de Escala y Multiplicadores de Esfuerzo</h3>
                 <p>
-                  COCOMO II introduces scale factors that affect the exponent in the effort equation, 
-                  and 17 cost drivers that multiply the nominal effort to calculate the actual effort.
+                  COCOMO II introduce factores de escala que afectan el exponente en la ecuación del esfuerzo, 
+                  y 17 multiplicadores de esfuerzo que modifican el esfuerzo nominal para calcular el esfuerzo real.
                 </p>
                 
-                <h3 className="text-lg font-medium">Basic Formula</h3>
+                <h3 className="text-lg font-medium">Fórmula Básica</h3>
                 <div className="bg-gray-100 p-4 rounded-md font-mono text-sm">
-                  <p>Effort = A × Size<sup>E</sup> × ∏EM<sub>i</sub></p>
-                  <p>Where:</p>
-                  <p>- A is a constant (2.94 for COCOMO II)</p>
-                  <p>- E is an exponent derived from five scale factors</p>
-                  <p>- ∏EM<sub>i</sub> is the product of 17 effort multipliers</p>
+                  <p>Esfuerzo = A × Tamaño<sup>E</sup> × ∏EM<sub>i</sub></p>
+                  <p>Donde:</p>
+                  <p>- A es una constante (2.94 para COCOMO II)</p>
+                  <p>- E es un exponente derivado de cinco factores de escala</p>
+                  <p>- ∏EM<sub>i</sub> es el producto de 17 multiplicadores de esfuerzo</p>
                 </div>
               </CardContent>
             </Card>

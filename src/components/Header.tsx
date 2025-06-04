@@ -15,7 +15,7 @@ export default function Header() {
             <div className="flex w-10 h-10 bg-primary rounded-full items-center justify-center">
               <span className="font-bold text-xl text-white">C</span>
             </div>
-            <span className="font-bold text-xl hidden sm:inline-block">COCOMO Calculator</span>
+            <span className="font-bold text-xl hidden sm:inline-block">COCOMO</span>
           </Link>
           
           <nav className="flex items-center space-x-6 text-sm font-medium">
@@ -26,7 +26,7 @@ export default function Header() {
                 isHome ? "text-foreground" : "text-foreground/60"
               )}
             >
-              Home
+              Inicio
             </Link>
             <Link
               to="/documentation"
@@ -35,7 +35,7 @@ export default function Header() {
                 isDocumentation ? "text-foreground" : "text-foreground/60"
               )}
             >
-              Documentation
+              Documentación
             </Link>
           </nav>
         </div>
