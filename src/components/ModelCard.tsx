@@ -7,7 +7,7 @@ interface ModelCardProps {
   title: string;
   description: string;
   imageUrl: string;
-  modelType: "cocomo81" | "cocomo2";
+  modelType?: "cocomo81" | "cocomo2" ;
 }
 
 export default function ModelCard({ title, description, imageUrl, modelType }: ModelCardProps) {

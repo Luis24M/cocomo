@@ -26,7 +26,7 @@ export default function Index() {
             title="COCOMO II"
             description="Modelo mejorado para proyectos de software modernos"
             imageUrl="/placeholder.svg"
-            modelType="cocomo2"
+            
           />
         </div>
       </main>

@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -7,7 +6,8 @@ import ResultsDisplay from "./ResultsDisplay";
 import Cocomo81Form from "./cocomo81/Cocomo81Form";
 import Cocomo2Form from "./cocomo2/Cocomo2Form";
 import ModelSelector from "./ModelSelector";
-import { CocomoResults } from "@/utils/cocomoCalculations";
+import CostDriversTable from "./cocomo81/CostDriversTable";
+import { CocomoResults, DevelopmentMode, calculateCocomo81 } from "@/utils/cocomoCalculations";
 
 const CocomoResultsKey = "CocomoResults";
 
@@ -16,8 +16,13 @@ export default function CocomoCalculator() {
   const navigate = useNavigate();
 
   const [results, setResults] = useState<CocomoResults | null>(null);
-
   const [listResults, setListResults] = useState<CocomoResults[]>([]);
+  
+  // Estados específicos para COCOMO 81
+  const [kloc, setKloc] = useState<number>(10);
+  const [developmentMode, setDevelopmentMode] = useState<DevelopmentMode>("organic");
+  const [developerSalary, setDeveloperSalary] = useState<number>(5000);
+  const [eaf, setEaf] = useState<number>(1.0);
 
   useEffect(() => {
     // Load previous results from localStorage
@@ -25,8 +30,7 @@ export default function CocomoCalculator() {
     if (storedResults) {
       setListResults(JSON.parse(storedResults));
     }
-  }
-  , []);
+  }, []);
 
   useEffect(() => {
     localStorage.setItem(CocomoResultsKey, JSON.stringify(listResults));
@@ -39,6 +43,23 @@ export default function CocomoCalculator() {
       toast.error("Invalid model type selected");
     }
   }, [modelType, navigate]);
+
+  // Efecto para calcular resultados de COCOMO 81 cuando cambien los parámetros
+  useEffect(() => {
+    if (modelType === "cocomo81") {
+      try {
+        const newResults = calculateCocomo81({ 
+          kloc, 
+          developmentMode, 
+          eaf,
+          developerSalary 
+        });
+        setResults(newResults);
+      } catch (error) {
+        console.error(error);
+      }
+    }
+  }, [kloc, developmentMode, eaf, developerSalary, modelType]);
 
   const addResult = (newResult: CocomoResults) => {
     setListResults([...listResults, newResult]);
@@ -67,7 +88,15 @@ export default function CocomoCalculator() {
             </CardHeader>
             <CardContent>
               {modelType === "cocomo81" ? (
-                <Cocomo81Form setResults={setResults} showCostDrivers={false} />
+                <Cocomo81Form 
+                  kloc={kloc}
+                  setKloc={setKloc}
+                  developmentMode={developmentMode}
+                  setDevelopmentMode={setDevelopmentMode}
+                  developerSalary={developerSalary}
+                  setDeveloperSalary={setDeveloperSalary}
+                  showCostDrivers={false}
+                />
               ) : (
                 <Cocomo2Form setResults={setResults} />
               )}
@@ -75,13 +104,20 @@ export default function CocomoCalculator() {
               <ModelSelector modelType={modelType} />
             </CardContent>
           </Card>
+          
           {/* Card de Conductores de coste */}
           <div className="lg:col-span-2">
             {modelType === "cocomo81" && (
-              <Cocomo81Form setResults={setResults} showOnlyCostDrivers={true} />
+              <Card className="shadow-sm border-0">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-base">Conductores de Costo</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <CostDriversTable onEafChange={setEaf} />
+                </CardContent>
+              </Card>
             )}
           </div>
-          
         </div>
         
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">

@@ -4,6 +4,7 @@ export type Cocomo81Input = {
   kloc: number; // Thousand lines of code
   developmentMode: DevelopmentMode;
   eaf?: number; // Effort Adjustment Factor (optional, default is 1.0)
+  developerSalary?: number; // Monthly developer salary (optional)
 };
 
 // COCOMO II Models
@@ -40,16 +41,19 @@ export type Cocomo2Input = {
   scaleDrivers: ScaleDrivers;
   costDrivers: CostDrivers;
   usesFunctionPoints: boolean;
+  developerSalary?: number; // Monthly developer salary (optional)
 };
 
 export type CocomoResults = {
   effort: number; // Person-months
   duration: number; // Months
   staffing: number; // People
+  totalCost?: number; // Total project cost
+  costPerMonth?: number; // Cost per month
 };
 
 // COCOMO 81 Calculations
-export function calculateCocomo81({ kloc, developmentMode, eaf = 1.0 }: Cocomo81Input): CocomoResults {
+export function calculateCocomo81({ kloc, developmentMode, eaf = 1.0, developerSalary = 5000 }: Cocomo81Input): CocomoResults {
   const constants = {
     organic: { a: 2.4, b: 1.05, c: 2.5, d: 0.38 },
     "semi-detached": { a: 3.0, b: 1.12, c: 2.5, d: 0.35 },
@@ -67,15 +71,21 @@ export function calculateCocomo81({ kloc, developmentMode, eaf = 1.0 }: Cocomo81
   // Average staffing
   const staffing = effort / duration;
   
+  // Calculate costs
+  const totalCost = effort * developerSalary;
+  const costPerMonth = totalCost / duration;
+  
   return {
     effort: parseFloat(effort.toFixed(2)),
     duration: parseFloat(duration.toFixed(2)),
-    staffing: parseFloat(staffing.toFixed(2))
+    staffing: parseFloat(staffing.toFixed(2)),
+    totalCost: parseFloat(totalCost.toFixed(2)),
+    costPerMonth: parseFloat(costPerMonth.toFixed(2))
   };
 }
 
 // COCOMO II Calculations
-export function calculateCocomo2({ size, scaleDrivers, costDrivers, usesFunctionPoints }: Cocomo2Input): CocomoResults {
+export function calculateCocomo2({ size, scaleDrivers, costDrivers, usesFunctionPoints, developerSalary = 5000 }: Cocomo2Input): CocomoResults {
   // Convert function points to KLOC if needed (simplified conversion)
   const sizeInKLOC = usesFunctionPoints ? size * 0.1 : size;
   
@@ -96,10 +106,18 @@ export function calculateCocomo2({ size, scaleDrivers, costDrivers, usesFunction
   // Average staffing
   const staffing = effort / duration;
   
+  // Calculate costs
+  const totalCost = effort * developerSalary;
+  const costPerMonth = totalCost / duration;
+  
+  console.log(totalCost, costPerMonth)
+
   return {
     effort: parseFloat(effort.toFixed(2)),
     duration: parseFloat(duration.toFixed(2)),
-    staffing: parseFloat(staffing.toFixed(2))
+    staffing: parseFloat(staffing.toFixed(2)),
+    totalCost: parseFloat(totalCost.toFixed(2)),
+    costPerMonth: parseFloat(costPerMonth.toFixed(2))
   };
 }
 

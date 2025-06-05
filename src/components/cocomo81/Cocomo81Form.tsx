@@ -1,40 +1,38 @@
-
-import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { DevelopmentMode, calculateCocomo81, CocomoResults } from "@/utils/cocomoCalculations";
+import { DevelopmentMode } from "@/utils/cocomoCalculations";
 import CostDriversTable from "./CostDriversTable";
 
 interface Cocomo81FormProps {
-  setResults: (results: CocomoResults) => void;
+  kloc?: number;
+  setKloc?: (value: number) => void;
+  developmentMode?: DevelopmentMode;
+  setDevelopmentMode?: (value: DevelopmentMode) => void;
+  developerSalary?: number;
+  setDeveloperSalary?: (value: number) => void;
   showCostDrivers?: boolean;
   showOnlyCostDrivers?: boolean;
+  // Props para compatibilidad hacia atrás (cuando se usa de forma independiente)
+  setResults?: (results: any) => void;
 }
 
-export default function Cocomo81Form({ setResults, showCostDrivers = true, showOnlyCostDrivers = false }: Cocomo81FormProps) {
-  const [kloc, setKloc] = useState<number>(10);
-  const [developmentMode, setDevelopmentMode] = useState<DevelopmentMode>("organic");
-  const [eaf, setEaf] = useState<number>(1.0);
-  
-  // Calculate results in real-time when any input changes
-  useEffect(() => {
-    try {
-      const newResults = calculateCocomo81({ 
-        kloc, 
-        developmentMode, 
-        eaf 
-      });
-      setResults(newResults);
-    } catch (error) {
-      console.error(error);
-    }
-  }, [kloc, developmentMode, eaf, setResults]);
+export default function Cocomo81Form({ 
+  kloc = 10,
+  setKloc,
+  developmentMode = "organic",
+  setDevelopmentMode,
+  developerSalary = 5000,
+  setDeveloperSalary,
+  showCostDrivers = true, 
+  showOnlyCostDrivers = false,
+  setResults 
+}: Cocomo81FormProps) {
 
   if (showOnlyCostDrivers) {
     return (
       <div>
-        <CostDriversTable onEafChange={setEaf} />
+        <CostDriversTable onEafChange={() => {}} />
       </div>
     );
   }
@@ -50,7 +48,7 @@ export default function Cocomo81Form({ setResults, showCostDrivers = true, showO
             min="0"
             step="0.1"
             value={kloc}
-            onChange={(e) => setKloc(Number(e.target.value))}
+            onChange={(e) => setKloc && setKloc(Number(e.target.value))}
             className="h-9"
           />
         </div>
@@ -59,7 +57,7 @@ export default function Cocomo81Form({ setResults, showCostDrivers = true, showO
           <Label htmlFor="mode" className="text-sm font-medium">Tipo de desarrollo</Label>
           <Select 
             value={developmentMode} 
-            onValueChange={(value) => setDevelopmentMode(value as DevelopmentMode)}
+            onValueChange={(value) => setDevelopmentMode && setDevelopmentMode(value as DevelopmentMode)}
           >
             <SelectTrigger className="h-9">
               <SelectValue placeholder="Seleccionar modo" />
@@ -71,11 +69,25 @@ export default function Cocomo81Form({ setResults, showCostDrivers = true, showO
             </SelectContent>
           </Select>
         </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="salary" className="text-sm font-medium">Salario del desarrollador (mensual)</Label>
+          <Input 
+            id="salary" 
+            type="number" 
+            min="0"
+            step="100"
+            value={developerSalary}
+            onChange={(e) => setDeveloperSalary && setDeveloperSalary(Number(e.target.value))}
+            className="h-9"
+            placeholder="Ej: 5000"
+          />
+        </div>
       </div>
       
       {showCostDrivers && (
         <div className="mt-8">
-          <CostDriversTable onEafChange={setEaf} />
+          <CostDriversTable onEafChange={() => {}} />
         </div>
       )}
     </div>
