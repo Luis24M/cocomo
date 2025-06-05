@@ -50,6 +50,25 @@ export type CocomoResults = {
   staffing: number; // People
   totalCost?: number; // Total project cost
   costPerMonth?: number; // Cost per month
+  phaseBreakdown?: CocomoResults;
+  averageSalary?: number;
+  
+};
+
+export type DetailedCosts = {
+  requirements: PhaseData;
+  analysis: PhaseData;
+  design: PhaseData;
+  development: PhaseData;
+  testing: PhaseData;
+}
+
+export type PhaseData = {
+  percentage: number;
+  cost: number;
+  effort?: number; // Person-months calculado para esta fase
+  time?: number; // Tiempo en meses para esta fase
+  totalCost?: number; // Costo total calculado para esta fase
 };
 
 // COCOMO 81 Calculations

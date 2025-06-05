@@ -1,5 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { useResultadosEtapasStore } from '@/hooks/useResultadosEtapas';
 import { CocomoResults } from '@/utils/cocomoCalculations';
+import { Input } from './ui/input';
 
 interface ResultsDisplayProps {
   results: CocomoResults;
@@ -19,6 +21,9 @@ export default function ResultsDisplay({
   showOnlyStages = false,
 }: ResultsDisplayProps) {
   const { effort, duration, staffing, totalCost, costPerMonth } = results;
+  const detailedCosts = useResultadosEtapasStore((state) => state.detailedCosts);
+  const fasesActivas = useResultadosEtapasStore((state) => state.fasesActivas);
+  console.log(detailedCosts);
 
   if (showOnlyStages) {
     return (
@@ -28,35 +33,53 @@ export default function ResultsDisplay({
         </CardHeader>
         <CardContent>
           <table className="table-auto w-full text-sm text-center">
-            <thead>
-              <tr>
-                <th className="px-4 py-2 font-medium">Esfuerzo</th>
-                <th className="px-4 py-2 font-medium">Duración</th>
-                <th className="px-4 py-2 font-medium">Tamaño de equipo</th>
+            <thead className="bg-gray-100">
+              <tr className="text-xs text-gray-600">
+                <th className="px-4 py-2 font-medium">Fase</th>
+                <th className="px-4 py-2 font-medium">Porcentaje (%)</th>
+                <th className="px-4 py-2 font-medium">Costo Mensual</th>
+                {/* <th className="px-4 py-2 font-medium">Esfuerzo (PM)</th>
+                <th className="px-4 py-2 font-medium">Tiempo (Meses)</th> */}
                 <th className="px-4 py-2 font-medium">Costo Total</th>
-                <th className="px-4 py-2 font-medium">Costo por mes</th>
               </tr>
             </thead>
             <tbody>
-              {listResults && listResults.length > 0 ? (
-                listResults.map((stage, index) => (
-                  <tr key={index} className="text-xs text-gray-600"> 
-                    <td className="px-4 py-2">{stage.effort.toFixed(1)} personas-mes</td>
-                    <td className="px-4 py-2">{stage.duration.toFixed(1)} meses</td>
-                    <td className="px-4 py-2">{stage.staffing.toFixed(1)} personas</td>
-                    <td className="px-4 py-2">{stage.totalCost.toFixed(1)} </td>
-                    <td className="px-4 py-2">{stage.costPerMonth.toFixed(1)} </td>
-                  </tr>
-                ))
-              ) : (
-              <tr className="text-xs text-gray-600">
-                <td className="px-4 py-2">-</td>
-                <td className="px-4 py-2">-</td>
-                <td className="px-4 py-2">-</td>  
-                <td className="px-4 py-2">-</td>
-                <td className="px-4 py-2">-</td>
-              </tr>
-              )}
+              {
+                fasesActivas && Object.entries(detailedCosts).map(([phase, data]) => {
+                  const phaseLabels = {
+                    requirements: 'Requerimientos',
+                    analysis: 'Análisis',
+                    design: 'Diseño',
+                    development: 'Desarrollo',
+                    testing: 'Pruebas'
+                  };
+                  // solo resultados nada de inputs
+                  return (
+                    <tr key={phase} className="hover:bg-gray-50">
+                      <td className="border border-gray-300 px-3 py-2 text-sm font-medium">
+                        {phaseLabels[phase as keyof typeof phaseLabels]}
+                      </td>
+                      {/* porcentaje no es necesario ingresar datos */}
+                      <td className="border border-gray-300 px-2 py-2">
+                        <span className="block py-2">{data.percentage ?? 0}</span>
+                      </td>
+
+                      <td className="border border-gray-300 px-2 py-2">
+                        <span className="block py-2">{data.cost ?? 0}</span>
+                      </td>
+                      {/* <td className="border border-gray-300 px-2 py-2">
+                        <span className="block py-2">{data.effort ?? 0}</span>
+                      </td>
+                      <td className="border border-gray-300 px-2 py-2">
+                        <span className="block py-2">{data.time ?? 0}</span>  
+                      </td> */}
+                      {/* costo total no es necesario ingresar datos */}
+                      <td className="border border-gray-300 px-2 py-2">
+                        <span className="block py-2">{data.totalCost ?? 0}</span>  
+                      </td>
+                    </tr>) 
+              })
+            }
             </tbody>
           </table>
         </CardContent>
@@ -98,14 +121,14 @@ export default function ResultsDisplay({
             </div>
           </div>
 
-          <div className='flex justify-between items-center mt-4'>
+          {/* <div className='flex justify-between items-center mt-4'>
             <button onClick={()=>addResult(results)} className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
               <span className="font-medium">Guardar</span>
             </button>
             <button onClick={clearResults} className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600">
               <span className="font-medium">Limpiar</span>
             </button>
-          </div>
+          </div> */}
         </CardContent>
       </Card>
 
