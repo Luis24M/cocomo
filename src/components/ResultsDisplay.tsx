@@ -24,7 +24,7 @@ export default function ResultsDisplay({
     return (
       <Card className="shadow-sm border-0">
         <CardHeader className="pb-2">
-          <CardTitle className="text-base">Etapas</CardTitle>
+          <CardTitle className="text-base">Resultados</CardTitle>
         </CardHeader>
         <CardContent>
           <table className="table-auto w-full text-sm text-center">
@@ -33,6 +33,8 @@ export default function ResultsDisplay({
                 <th className="px-4 py-2 font-medium">Esfuerzo</th>
                 <th className="px-4 py-2 font-medium">Duración</th>
                 <th className="px-4 py-2 font-medium">Tamaño de equipo</th>
+                <th className="px-4 py-2 font-medium">Costo Total</th>
+                <th className="px-4 py-2 font-medium">Costo por mes</th>
               </tr>
             </thead>
             <tbody>
@@ -42,11 +44,15 @@ export default function ResultsDisplay({
                     <td className="px-4 py-2">{stage.effort.toFixed(1)} personas-mes</td>
                     <td className="px-4 py-2">{stage.duration.toFixed(1)} meses</td>
                     <td className="px-4 py-2">{stage.staffing.toFixed(1)} personas</td>
+                    <td className="px-4 py-2">{stage.totalCost.toFixed(1)} </td>
+                    <td className="px-4 py-2">{stage.costPerMonth.toFixed(1)} </td>
                   </tr>
                 ))
               ) : (
               <tr className="text-xs text-gray-600">
                 <td className="px-4 py-2">-</td>
+                <td className="px-4 py-2">-</td>
+                <td className="px-4 py-2">-</td>  
                 <td className="px-4 py-2">-</td>
                 <td className="px-4 py-2">-</td>
               </tr>

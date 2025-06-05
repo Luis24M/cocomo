@@ -101,7 +101,7 @@ export default function CocomoCalculator() {
                 <Cocomo2Form setResults={setResults} />
               )}
               
-              <ModelSelector modelType={modelType} />
+              {/* <ModelSelector modelType={modelType} /> */}
             </CardContent>
           </Card>
           
