@@ -60,6 +60,7 @@ export function calculateCocomo81({ kloc, developmentMode, eaf = 1.0 }: Cocomo81
   
   // Calculate effort in person-months
   const effort = a * Math.pow(kloc, b) * eaf;
+
   
   // Calculate development time in months
   const duration = c * Math.pow(effort, d);
