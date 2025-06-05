@@ -21,6 +21,7 @@ export default function CocomoCalculator() {
   // Estados específicos para COCOMO 81
   const [kloc, setKloc] = useState<number>(10);
   const [developmentMode, setDevelopmentMode] = useState<DevelopmentMode>("organic");
+  const [developerSalary, setDeveloperSalary] = useState<number>(5000);
   const [eaf, setEaf] = useState<number>(1.0);
 
   useEffect(() => {
@@ -50,14 +51,15 @@ export default function CocomoCalculator() {
         const newResults = calculateCocomo81({ 
           kloc, 
           developmentMode, 
-          eaf 
+          eaf,
+          developerSalary 
         });
         setResults(newResults);
       } catch (error) {
         console.error(error);
       }
     }
-  }, [kloc, developmentMode, eaf, modelType]);
+  }, [kloc, developmentMode, eaf, developerSalary, modelType]);
 
   const addResult = (newResult: CocomoResults) => {
     setListResults([...listResults, newResult]);
@@ -91,6 +93,8 @@ export default function CocomoCalculator() {
                   setKloc={setKloc}
                   developmentMode={developmentMode}
                   setDevelopmentMode={setDevelopmentMode}
+                  developerSalary={developerSalary}
+                  setDeveloperSalary={setDeveloperSalary}
                   showCostDrivers={false}
                 />
               ) : (

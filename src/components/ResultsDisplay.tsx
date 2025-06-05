@@ -18,7 +18,7 @@ export default function ResultsDisplay({
   showStages = true,
   showOnlyStages = false,
 }: ResultsDisplayProps) {
-  const { effort, duration, staffing } = results;
+  const { effort, duration, staffing, totalCost, costPerMonth } = results;
 
   if (showOnlyStages) {
     return (
@@ -79,6 +79,16 @@ export default function ResultsDisplay({
             <div className="flex justify-between items-center">
               <span className=" font-medium">Tamaño de equipo</span>
               <span className="">{staffing.toFixed(1)} personas</span>
+            </div>
+
+            <div className="flex justify-between items-center">
+              <span className=" font-medium">Costo Total</span>
+              <span className="">{totalCost.toFixed(1)} </span>
+            </div>
+
+            <div className="flex justify-between items-center">
+              <span className=" font-medium">Costo por mes</span>
+              <span className="">{costPerMonth.toFixed(1)} </span>
             </div>
           </div>
 

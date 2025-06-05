@@ -9,6 +9,8 @@ interface Cocomo81FormProps {
   setKloc?: (value: number) => void;
   developmentMode?: DevelopmentMode;
   setDevelopmentMode?: (value: DevelopmentMode) => void;
+  developerSalary?: number;
+  setDeveloperSalary?: (value: number) => void;
   showCostDrivers?: boolean;
   showOnlyCostDrivers?: boolean;
   // Props para compatibilidad hacia atrás (cuando se usa de forma independiente)
@@ -20,6 +22,8 @@ export default function Cocomo81Form({
   setKloc,
   developmentMode = "organic",
   setDevelopmentMode,
+  developerSalary = 5000,
+  setDeveloperSalary,
   showCostDrivers = true, 
   showOnlyCostDrivers = false,
   setResults 
@@ -64,6 +68,20 @@ export default function Cocomo81Form({
               <SelectItem value="embedded">Empotrado</SelectItem>
             </SelectContent>
           </Select>
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="salary" className="text-sm font-medium">Salario del desarrollador (mensual)</Label>
+          <Input 
+            id="salary" 
+            type="number" 
+            min="0"
+            step="100"
+            value={developerSalary}
+            onChange={(e) => setDeveloperSalary && setDeveloperSalary(Number(e.target.value))}
+            className="h-9"
+            placeholder="Ej: 5000"
+          />
         </div>
       </div>
       
