@@ -52,8 +52,13 @@ export type CocomoResults = {
   costPerMonth?: number; // Cost per month
   phaseBreakdown?: CocomoResults;
   averageSalary?: number;
-  
 };
+
+export type FunctionPointsResults = {
+  unadjustedFunctionPoints: number; // Total unadjusted function points
+  adjustedFunctionPoints: number; // Adjusted function points after applying the value adjustment factor
+  linesOfCode: number; // Estimated lines of code based on function points
+}
 
 export type DetailedCosts = {
   requirements: PhaseData;
@@ -198,3 +203,15 @@ export const costDriverRanges = {
   site: { values: [1.22, 1.09, 1.00, 0.93, 0.86, 0.80], labels: ["Very Low", "Low", "Nominal", "High", "Very High", "Extra High"] },
   sced: { values: [1.43, 1.14, 1.00, 1.00, 1.00], labels: ["Very Low", "Low", "Nominal", "High", "Very High"] }
 };
+
+// Function to calculate Function Points from KLOC
+export function calculateFunctionPoints(FP: number, adjustFactor: number, functionPointsWeight: number): FunctionPointsResults {
+  const adjustedFunctionPoints = functionPointsWeight * adjustFactor;
+  const linesOfCode = functionPointsWeight * FP ;
+
+  return {
+    unadjustedFunctionPoints: functionPointsWeight,
+    adjustedFunctionPoints: adjustedFunctionPoints,
+    linesOfCode: linesOfCode
+  };
+}
