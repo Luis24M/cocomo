@@ -46,7 +46,7 @@ export default function Cocomo2Form({ setResults }: Cocomo2FormProps) {
   return (
     <div className="space-y-4">
       <div className="space-y-2">
-        <Label htmlFor="size" className="text-sm">Project Size</Label>
+        <Label htmlFor="size" className="text-sm">Tamaño del Proyecto (KLDC)</Label>
         <Input 
           id="size" 
           type="number" 
@@ -69,8 +69,8 @@ export default function Cocomo2Form({ setResults }: Cocomo2FormProps) {
       
       <Tabs defaultValue="scale-drivers" className="w-full">
         <TabsList className="grid w-full grid-cols-2 h-9">
-          <TabsTrigger value="scale-drivers" className="text-xs">Scale Drivers</TabsTrigger>
-          <TabsTrigger value="cost-drivers" className="text-xs">Cost Drivers</TabsTrigger>
+          <TabsTrigger value="scale-drivers" className="text-xs">Conductores de escala</TabsTrigger>
+          <TabsTrigger value="cost-drivers" className="text-xs">Conductores de costo</TabsTrigger>
         </TabsList>
         <TabsContent value="scale-drivers" className="space-y-3 pt-3">
           <ScaleDriversForm 

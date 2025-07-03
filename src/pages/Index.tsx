@@ -26,7 +26,7 @@ export default function Index() {
             title="COCOMO II"
             description="Modelo mejorado para proyectos de software modernos"
             imageUrl="/placeholder.svg"
-            // modelType="cocomo2"
+            modelType="cocomo2"
             intro="La versión mejorada con parámetros adicionales para el desarrollo de software moderno. Ideal para proyectos complejos con diversas metodologías de desarrollo."
           />
           <ModelCard
