@@ -51,7 +51,7 @@ export default function Cocomo2Form({ setResults }: Cocomo2FormProps) {
       {/* Formulario principal */}
       <div className="space-y-6">
         {/* Inputs básicos */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="flex flex-col md:grid-cols-3 gap-4">
           <div className="space-y-2">
             <Label htmlFor="size" className="text-sm font-medium">Tamaño del Proyecto (KLDC)</Label>
             <Input 
