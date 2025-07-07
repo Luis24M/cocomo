@@ -11,12 +11,12 @@ interface ScaleDriversFormProps {
 export default function ScaleDriversForm({ scaleDrivers, updateScaleDriver }: ScaleDriversFormProps) {
   return (
     <div className="space-y-4">
-      <h3 className="text-sm font-medium">Scale Drivers</h3>
+      <h3 className="text-sm font-medium">Conductores de escala</h3>
       
       <div className="space-y-3">
         <div className="space-y-1">
           <div className="flex items-center justify-between">
-            <Label className="text-xs">Precedentedness</Label>
+            <Label className="text-xs">Precedencia</Label>
             <span className="text-xs font-medium">{scaleDrivers.precedentedness.toFixed(2)}</span>
           </div>
           <Slider
@@ -30,7 +30,7 @@ export default function ScaleDriversForm({ scaleDrivers, updateScaleDriver }: Sc
         
         <div className="space-y-1">
           <div className="flex items-center justify-between">
-            <Label className="text-xs">Development Flexibility</Label>
+            <Label className="text-xs">Flexibilidad en el desarrollo</Label>
             <span className="text-xs font-medium">{scaleDrivers.developmentFlexibility.toFixed(2)}</span>
           </div>
           <Slider
@@ -44,7 +44,7 @@ export default function ScaleDriversForm({ scaleDrivers, updateScaleDriver }: Sc
         
         <div className="space-y-1">
           <div className="flex items-center justify-between">
-            <Label className="text-xs">Architecture Risk Resolution</Label>
+            <Label className="text-xs">Arquitectura y determinacion del riesgo</Label>
             <span className="text-xs font-medium">{scaleDrivers.architectureRiskResolution.toFixed(2)}</span>
           </div>
           <Slider
@@ -58,7 +58,7 @@ export default function ScaleDriversForm({ scaleDrivers, updateScaleDriver }: Sc
         
         <div className="space-y-1">
           <div className="flex items-center justify-between">
-            <Label className="text-xs">Team Cohesion</Label>
+            <Label className="text-xs">Cohesion del equipo</Label>
             <span className="text-xs font-medium">{scaleDrivers.teamCohesion.toFixed(2)}</span>
           </div>
           <Slider
@@ -72,7 +72,7 @@ export default function ScaleDriversForm({ scaleDrivers, updateScaleDriver }: Sc
         
         <div className="space-y-1">
           <div className="flex items-center justify-between">
-            <Label className="text-xs">Process Maturity</Label>
+            <Label className="text-xs">Madurez del proceso</Label>
             <span className="text-xs font-medium">{scaleDrivers.processMaturiy.toFixed(2)}</span>
           </div>
           <Slider
