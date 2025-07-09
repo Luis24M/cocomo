@@ -7,11 +7,15 @@ import { calculateCocomo2, defaultCocomo2Values, CocomoResults } from "@/utils/c
 import ScaleDriversForm from "./ScaleDriversForm";
 import CostDriversTable from "../cocomo81/CostDriversTable";
 
+
 interface Cocomo2FormProps {
+  showCostDrivers?: boolean;
   setResults: (results: CocomoResults) => void;
 }
 
-export default function Cocomo2Form({ setResults }: Cocomo2FormProps) {
+export default function Cocomo2Form({ setResults,
+  showCostDrivers = false, 
+ }: Cocomo2FormProps) {
   const [size, setSize] = useState<number>(10);
   const [usesFunctionPoints, setUsesFunctionPoints] = useState<boolean>(false);
   const [scaleDrivers, setScaleDrivers] = useState(defaultCocomo2Values.scaleDrivers);
@@ -27,7 +31,6 @@ export default function Cocomo2Form({ setResults }: Cocomo2FormProps) {
         size,
         usesFunctionPoints,
         scaleDrivers,
-        costDrivers,
         developerSalary
       });
       
@@ -109,6 +112,11 @@ export default function Cocomo2Form({ setResults }: Cocomo2FormProps) {
           </TabsContent>
         </Tabs>
       </div>
+        {showCostDrivers && (
+          <div className="mt-8">
+            <CostDriversTable onEafChange={() => {}} />
+          </div>
+        )}
     </div>
   );
 }

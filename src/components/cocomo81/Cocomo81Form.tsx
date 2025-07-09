@@ -38,7 +38,7 @@ export default function Cocomo81Form({
   onDetailedCostChange,
   calculateAverageSalary,
   getTotalPercentage,
-  showCostDrivers = true, 
+  showCostDrivers = false, 
   showOnlyCostDrivers = false,
   setResults 
 }: Cocomo81FormProps) {

@@ -39,7 +39,8 @@ export type CostDrivers = {
 export type Cocomo2Input = {
   size: number; // Size in KLOC or Function Points
   scaleDrivers: ScaleDrivers;
-  costDrivers: CostDrivers;
+  //costDrivers: CostDrivers;
+  eaf?: number;
   usesFunctionPoints: boolean;
   developerSalary?: number; // Monthly developer salary (optional)
 };
@@ -109,7 +110,7 @@ export function calculateCocomo81({ kloc, developmentMode, eaf = 1.0, developerS
 }
 
 // COCOMO II Calculations
-export function calculateCocomo2({ size, scaleDrivers, costDrivers, usesFunctionPoints, developerSalary = 5000 }: Cocomo2Input): CocomoResults {
+export function calculateCocomo2({ size, scaleDrivers, eaf = 1.0 , usesFunctionPoints, developerSalary = 5000 }: Cocomo2Input): CocomoResults {
   // Convert function points to KLOC if needed (simplified conversion)
   const sizeInKLOC = usesFunctionPoints ? size * 0.1 : size;
   
@@ -118,10 +119,10 @@ export function calculateCocomo2({ size, scaleDrivers, costDrivers, usesFunction
   const scaleFactor = 0.91 + 0.01 * scaleFactorSum;
   
   // Calculate Effort Multiplier (EM)
-  const effortMultiplier = Object.values(costDrivers).reduce((product, value) => product * value, 1.0);
+  //const effortMultiplier = Object.values(costDrivers).reduce((product, value) => product * value, 1.0);
   
   // Calculate effort
-  const effort = 2.94 * Math.pow(sizeInKLOC, scaleFactor) * effortMultiplier;
+  const effort = 2.94 * Math.pow(sizeInKLOC, scaleFactor) * eaf;
   
   // Calculate duration
   const durationExponent = 0.33 + 0.2 * (scaleFactor - 1.01);

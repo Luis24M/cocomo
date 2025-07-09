@@ -296,7 +296,7 @@ export default function CocomoCalculator() {
     }
     if (modelType === 'cocomo2') {
       return (
-                <Card className="shadow-sm border-0">
+        <Card className="shadow-sm border-0">
           <CardHeader className="pb-2">
             <CardTitle className="text-base">Conductores de Costo</CardTitle>
           </CardHeader>
