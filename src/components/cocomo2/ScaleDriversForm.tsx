@@ -1,12 +1,25 @@
+import { useState, useEffect } from "react";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { ScaleDrivers } from "@/utils/cocomoCalculations";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface ScaleDriversFormProps {
-  scaleDrivers: ScaleDrivers;
-  updateScaleDriver: (key: keyof ScaleDrivers, value: number) => void;
+  onExponentChange: (exp: number) => void;
   showExponent?: boolean;
 }
+
+type ScaleDrivers = {
+  precedentedness: number;
+  developmentFlexibility: number;
+  architectureRiskResolution: number;
+  teamCohesion: number;
+  processMaturiy: number;
+};
 
 const levelOptions = {
   precedentedness: [
@@ -51,7 +64,27 @@ const levelOptions = {
   ],
 };
 
-export default function ScaleDriversForm({ scaleDrivers, updateScaleDriver, showExponent = true }: ScaleDriversFormProps) {
+export default function ScaleDriversForm({ onExponentChange, showExponent = true }: ScaleDriversFormProps) {
+  const [scaleDrivers, setScaleDrivers] = useState<ScaleDrivers>({
+    precedentedness: 3.72,
+    developmentFlexibility: 3.04,
+    architectureRiskResolution: 4.24,
+    teamCohesion: 3.29,
+    processMaturiy: 4.68,
+  });
+
+  const total = Object.values(scaleDrivers).reduce((sum, val) => sum + val, 0);
+  const exponent = 0.91 + 0.01 * total;
+
+  // Comunicar al padre cada vez que el exponente cambie
+  useEffect(() => {
+    onExponentChange(exponent);
+  }, [exponent, onExponentChange]);
+
+  const handleChange = (key: keyof ScaleDrivers, value: number) => {
+    setScaleDrivers(prev => ({ ...prev, [key]: value }));
+  };
+
   const renderSelect = (
     label: string,
     key: keyof ScaleDrivers,
@@ -63,7 +96,7 @@ export default function ScaleDriversForm({ scaleDrivers, updateScaleDriver, show
         <Label className="text-xs font-medium">{label}</Label>
         <Select
           value={currentValue.toString()}
-          onValueChange={(val) => updateScaleDriver(key, parseFloat(val))}
+          onValueChange={(val) => handleChange(key, parseFloat(val))}
         >
           <SelectTrigger className="w-full h-8">
             <SelectValue>
@@ -86,9 +119,6 @@ export default function ScaleDriversForm({ scaleDrivers, updateScaleDriver, show
       </div>
     );
   };
-
-  const total = Object.values(scaleDrivers).reduce((sum, val) => sum + val, 0);
-  const exponent = 0.91 + 0.01 * total;
 
   return (
     <div className="space-y-4">

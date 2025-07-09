@@ -5,10 +5,17 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Checkbox } from "@/components/ui/checkbox";
 import { calculateCocomo2, defaultCocomo2Values, CocomoResults } from "@/utils/cocomoCalculations";
 import ScaleDriversForm from "./ScaleDriversForm";
+import { DevelopmentMode } from "@/utils/cocomoCalculations";
 import CostDriversTable from "../cocomo81/CostDriversTable";
 
 
 interface Cocomo2FormProps {
+  kloc?: number;
+  setKloc?: (value: number) => void;
+  developmentMode?: DevelopmentMode;
+  setDevelopmentMode?: (value: DevelopmentMode) => void;
+  developerSalary?: number;
+  setDeveloperSalary?: (value: number) => void;
   setResults: (results: CocomoResults) => void;
 }
 
@@ -90,25 +97,7 @@ export default function Cocomo2Form({ setResults,
           </div>
         </div>
 
-        {/* Tabs for Scale Drivers and Cost Drivers */}
-        <Tabs defaultValue="scale" className="w-full">
-          <TabsList className="flex flex-grow w-full ">
-            <TabsTrigger className="w-full"value="scale">Conductores de Escala</TabsTrigger>
-          </TabsList>
-          
-          <TabsContent value="scale" className="space-y-4">
-            <div className="p-4 border rounded-lg bg-gray-50">
-              <h3 className="text-sm font-medium mb-3">Conductores de escala</h3>
-              <p className="text-xs text-gray-600 mb-4">
-                Estos factores determinan la escala del proyecto y afectan el exponente en la ecuación de esfuerzo.
-              </p>
-              <ScaleDriversForm 
-                scaleDrivers={scaleDrivers} 
-                updateScaleDriver={updateScaleDriver} 
-              />
-            </div>
-          </TabsContent>
-        </Tabs>
+
       </div>
     </div>
   );

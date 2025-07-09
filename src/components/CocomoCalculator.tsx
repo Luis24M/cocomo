@@ -10,6 +10,7 @@ import Cocomo2Form from './cocomo2/Cocomo2Form';
 import ModelSelector from './ModelSelector';
 import CostDriversTable from './cocomo81/CostDriversTable';
 import FunctionPointsForm from './functionpoints/FunctionPointsForm';
+import ScaleDriversForm from './cocomo2/ScaleDriversForm';
 
 // Types and Utils
 import {
@@ -67,7 +68,8 @@ export default function CocomoCalculator() {
   const [developerSalary, setDeveloperSalary] = useState<number>(5000);
   const [eaf, setEaf] = useState<number>(1.0);
 
-
+  // COMO 2 STATES
+  const [exponent, setExponent] = useState<number>(1.0);
 
   // Function Points specific states
   const [functionPointsWeight, setFunctionPointsWeight] = useState<number>(0);
@@ -304,6 +306,9 @@ export default function CocomoCalculator() {
           </CardHeader>
           <CardContent>
             <CostDriversTable onEafChange={setEaf} />
+          </CardContent>
+          <CardContent>
+            <ScaleDriversForm onExponentChange={setExponent} />
           </CardContent>
         </Card>
       );
