@@ -1,89 +1,113 @@
-
 import { Label } from "@/components/ui/label";
-import { Slider } from "@/components/ui/slider";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ScaleDrivers } from "@/utils/cocomoCalculations";
 
 interface ScaleDriversFormProps {
   scaleDrivers: ScaleDrivers;
   updateScaleDriver: (key: keyof ScaleDrivers, value: number) => void;
+  showExponent?: boolean;
 }
 
-export default function ScaleDriversForm({ scaleDrivers, updateScaleDriver }: ScaleDriversFormProps) {
+const levelOptions = {
+  precedentedness: [
+    { label: "Muy bajo", value: 6.20 },
+    { label: "Bajo", value: 4.96 },
+    { label: "Nominal", value: 3.72 },
+    { label: "Alto", value: 2.48 },
+    { label: "Muy alto", value: 1.24 },
+    { label: "Extra alto", value: 0.00 },
+  ],
+  developmentFlexibility: [
+    { label: "Muy bajo", value: 5.07 },
+    { label: "Bajo", value: 4.05 },
+    { label: "Nominal", value: 3.04 },
+    { label: "Alto", value: 2.03 },
+    { label: "Muy alto", value: 1.01 },
+    { label: "Extra alto", value: 0.00 },
+  ],
+  architectureRiskResolution: [
+    { label: "Muy bajo", value: 7.07 },
+    { label: "Bajo", value: 5.65 },
+    { label: "Nominal", value: 4.24 },
+    { label: "Alto", value: 2.83 },
+    { label: "Muy alto", value: 1.41 },
+    { label: "Extra alto", value: 0.00 },
+  ],
+  teamCohesion: [
+    { label: "Muy bajo", value: 5.48 },
+    { label: "Bajo", value: 4.38 },
+    { label: "Nominal", value: 3.29 },
+    { label: "Alto", value: 2.19 },
+    { label: "Muy alto", value: 1.10 },
+    { label: "Extra alto", value: 0.00 },
+  ],
+  processMaturiy: [
+    { label: "Muy bajo", value: 7.80 },
+    { label: "Bajo", value: 6.24 },
+    { label: "Nominal", value: 4.68 },
+    { label: "Alto", value: 3.12 },
+    { label: "Muy alto", value: 1.56 },
+    { label: "Extra alto", value: 0.00 },
+  ],
+};
+
+export default function ScaleDriversForm({ scaleDrivers, updateScaleDriver, showExponent = true }: ScaleDriversFormProps) {
+  const renderSelect = (
+    label: string,
+    key: keyof ScaleDrivers,
+    currentValue: number
+  ) => {
+    const options = levelOptions[key];
+    return (
+      <div className="space-y-2">
+        <Label className="text-xs font-medium">{label}</Label>
+        <Select
+          value={currentValue.toString()}
+          onValueChange={(val) => updateScaleDriver(key, parseFloat(val))}
+        >
+          <SelectTrigger className="w-full h-8">
+            <SelectValue>
+              {
+                (() => {
+                  const selected = options.find(opt => opt.value.toFixed(2) === currentValue.toFixed(2));
+                  return selected ? `${selected.label} (${selected.value.toFixed(2)})` : "Seleccionar...";
+                })()
+              }
+            </SelectValue>
+          </SelectTrigger>
+          <SelectContent>
+            {options.map((level, index) => (
+              <SelectItem key={index} value={level.value.toString()}>
+                {`${level.label} (${level.value.toFixed(2)})`}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+    );
+  };
+
+  const total = Object.values(scaleDrivers).reduce((sum, val) => sum + val, 0);
+  const exponent = 0.91 + 0.01 * total;
+
   return (
     <div className="space-y-4">
-      <h3 className="text-sm font-medium">Conductores de escala</h3>
-      
-      <div className="space-y-3">
-        <div className="space-y-1">
-          <div className="flex items-center justify-between">
-            <Label className="text-xs">Precedencia</Label>
-            <span className="text-xs font-medium">{scaleDrivers.precedentedness.toFixed(2)}</span>
-          </div>
-          <Slider
-            min={0}
-            max={6}
-            step={0.1}
-            value={[scaleDrivers.precedentedness]}
-            onValueChange={(vals) => updateScaleDriver('precedentedness', vals[0])}
-          />
-        </div>
-        
-        <div className="space-y-1">
-          <div className="flex items-center justify-between">
-            <Label className="text-xs">Flexibilidad en el desarrollo</Label>
-            <span className="text-xs font-medium">{scaleDrivers.developmentFlexibility.toFixed(2)}</span>
-          </div>
-          <Slider
-            min={0}
-            max={6}
-            step={0.1}
-            value={[scaleDrivers.developmentFlexibility]}
-            onValueChange={(vals) => updateScaleDriver('developmentFlexibility', vals[0])}
-          />
-        </div>
-        
-        <div className="space-y-1">
-          <div className="flex items-center justify-between">
-            <Label className="text-xs">Arquitectura y determinacion del riesgo</Label>
-            <span className="text-xs font-medium">{scaleDrivers.architectureRiskResolution.toFixed(2)}</span>
-          </div>
-          <Slider
-            min={0}
-            max={6}
-            step={0.1}
-            value={[scaleDrivers.architectureRiskResolution]}
-            onValueChange={(vals) => updateScaleDriver('architectureRiskResolution', vals[0])}
-          />
-        </div>
-        
-        <div className="space-y-1">
-          <div className="flex items-center justify-between">
-            <Label className="text-xs">Cohesion del equipo</Label>
-            <span className="text-xs font-medium">{scaleDrivers.teamCohesion.toFixed(2)}</span>
-          </div>
-          <Slider
-            min={0}
-            max={6}
-            step={0.1}
-            value={[scaleDrivers.teamCohesion]}
-            onValueChange={(vals) => updateScaleDriver('teamCohesion', vals[0])}
-          />
-        </div>
-        
-        <div className="space-y-1">
-          <div className="flex items-center justify-between">
-            <Label className="text-xs">Madurez del proceso</Label>
-            <span className="text-xs font-medium">{scaleDrivers.processMaturiy.toFixed(2)}</span>
-          </div>
-          <Slider
-            min={0}
-            max={6}
-            step={0.1}
-            value={[scaleDrivers.processMaturiy]}
-            onValueChange={(vals) => updateScaleDriver('processMaturiy', vals[0])}
-          />
-        </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {renderSelect("Precedencia", "precedentedness", scaleDrivers.precedentedness)}
+        {renderSelect("Flexibilidad en el desarrollo", "developmentFlexibility", scaleDrivers.developmentFlexibility)}
+        {renderSelect("Arquitectura y determinación del riesgo", "architectureRiskResolution", scaleDrivers.architectureRiskResolution)}
+        {renderSelect("Cohesión del equipo", "teamCohesion", scaleDrivers.teamCohesion)}
+        {renderSelect("Madurez del proceso", "processMaturiy", scaleDrivers.processMaturiy)}
       </div>
+
+      {showExponent && (
+        <div className="mt-6 border rounded-lg p-4 bg-gray-50 shadow-sm">
+          <h4 className="text-sm font-semibold mb-2">Exponente del esfuerzo (E)</h4>
+          <p className="text-base font-mono text-blue-600">
+            E = 0.91 + 0.01 × {total.toFixed(2)} = <strong>{exponent.toFixed(3)}</strong>
+          </p>
+        </div>
+      )}
     </div>
   );
 }

@@ -67,6 +67,8 @@ export default function CocomoCalculator() {
   const [developerSalary, setDeveloperSalary] = useState<number>(5000);
   const [eaf, setEaf] = useState<number>(1.0);
 
+
+
   // Function Points specific states
   const [functionPointsWeight, setFunctionPointsWeight] = useState<number>(0);
   const [FP, setFP] = useState<number>(0);
@@ -296,7 +298,7 @@ export default function CocomoCalculator() {
     }
     if (modelType === 'cocomo2') {
       return (
-        <Card className="shadow-sm border-0">
+               <Card className="shadow-sm border-0">
           <CardHeader className="pb-2">
             <CardTitle className="text-base">Conductores de Costo</CardTitle>
           </CardHeader>

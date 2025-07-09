@@ -9,12 +9,10 @@ import CostDriversTable from "../cocomo81/CostDriversTable";
 
 
 interface Cocomo2FormProps {
-  showCostDrivers?: boolean;
   setResults: (results: CocomoResults) => void;
 }
 
 export default function Cocomo2Form({ setResults,
-  showCostDrivers = false, 
  }: Cocomo2FormProps) {
   const [size, setSize] = useState<number>(10);
   const [usesFunctionPoints, setUsesFunctionPoints] = useState<boolean>(false);
@@ -112,11 +110,6 @@ export default function Cocomo2Form({ setResults,
           </TabsContent>
         </Tabs>
       </div>
-        {showCostDrivers && (
-          <div className="mt-8">
-            <CostDriversTable onEafChange={() => {}} />
-          </div>
-        )}
     </div>
   );
 }
