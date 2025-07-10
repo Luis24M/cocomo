@@ -10,6 +10,8 @@ import Cocomo2Form from './cocomo2/Cocomo2Form';
 import ModelSelector from './ModelSelector';
 import CostDriversTable from './cocomo81/CostDriversTable';
 import FunctionPointsForm from './functionpoints/FunctionPointsForm';
+import ScaleDriversForm from './cocomo2/ScaleDriversForm';
+import CostDriversTable2 from './cocomo2/CostDriversTable2';
 
 // Types and Utils
 import {
@@ -17,6 +19,7 @@ import {
   FunctionPointsResults,
   DevelopmentMode,
   calculateCocomo81,
+  calculateCocomo2,
   DetailedCosts,
   PhaseData,
   calculateFunctionPoints,
@@ -76,6 +79,10 @@ export default function CocomoCalculator() {
   const [eaf, setEaf] = useState<number>(1.0);
   const [activeDetailedCosts, setActiveDetailedCosts] =
     useState<boolean>(false);
+
+  // COMO 2 STATES
+  const [size, setSize] = useState<number>(5000);
+  const [scaleFactorSum, setScaleFactorSum] = useState<number>(0.0);
 
   // Function Points specific states
   const [functionPointsWeight, setFunctionPointsWeight] = useState<number>(0);
@@ -166,6 +173,33 @@ export default function CocomoCalculator() {
     }
   };
 
+const calculateCocomo2Results = (): void => {
+  if (modelType !== 'cocomo2') return;
+  
+  try {
+    const salary = useDetailedCosts
+      ? calculateAverageSalary()
+      : developerSalary;
+    
+    const newResults = calculateCocomo2({
+      size,
+      scaleFactorSum,
+      eaf,
+      developerSalary: salary,
+    });
+    
+    console.log(newResults)
+    setResults(newResults);
+    
+    if (useDetailedCosts) {
+      calculatePhaseResults();
+    }
+  } catch (error) {
+    console.error('Error calculating COCOMO II results:', error);
+    toast.error('Error calculating COCOMO II results');
+  }
+};
+
   const calculateFunctionPointsResults = (): void => {
     try {
       const result = calculateFunctionPoints(
@@ -255,6 +289,19 @@ export default function CocomoCalculator() {
   ]);
 
   useEffect(() => {
+  if (modelType === 'cocomo2') {
+    calculateCocomo2Results();
+  }
+}, [
+  size,
+  scaleFactorSum,
+  eaf,
+  developerSalary,
+  detailedCosts,
+  useDetailedCosts,
+]);
+
+  useEffect(() => {
     // Calculate Function Points results when parameters change
     if (modelType === 'functionpoints') {
       calculateFunctionPointsResults();
@@ -281,13 +328,20 @@ export default function CocomoCalculator() {
             showCostDrivers={false}
           />
         )}
-        {modelType === 'cocomo2' && <Cocomo2Form setResults={setResults} />}
-        {modelType === 'functionpoints' && (
-          <FunctionPointsForm
-            setAdjustFactor={setAdjustFactor}
-            setLdcValue={setFP}
-          />
-        )}
+        {modelType === 'cocomo2' && <Cocomo2Form 
+            kloc={size}
+            setKloc={setSize}
+            developerSalary={developerSalary}
+            setDeveloperSalary={setDeveloperSalary}
+            useDetailedCosts={useDetailedCosts}
+            setUseDetailedCosts={setUseDetailedCosts}
+            detailedCosts={detailedCosts}
+            onDetailedCostChange={handleDetailedCostChange}
+            calculateAverageSalary={calculateAverageSalary}
+            getTotalPercentage={getTotalPercentage}
+            showCostDrivers={false}
+             />}
+        {modelType === 'functionpoints' && <FunctionPointsForm setAdjustFactor={setAdjustFactor} setLdcValue={setFP} />}
         {modelType === 'usecasepoints' && (
           <UseCasePointsForm
           />
@@ -297,68 +351,88 @@ export default function CocomoCalculator() {
   );
 
   const renderCostDriversCard = () => {
-    return (
-      <Tabs defaultValue="costDrivers" className="w-full">
-        {useDetailedCosts && (
-          <TabsList className="">
-            <TabsTrigger value="costDrivers">conduictores de costo</TabsTrigger>
-            <TabsTrigger value="detailedCosts">Costos detallados</TabsTrigger>
-          </TabsList>
-        )}
+    if (modelType === 'cocomo2') {
+      return (
+        <Card className="shadow-sm border-0">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base">Conductores de Costo</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <CostDriversTable2 onEafChange={setEaf} />
+          </CardContent>
+          <CardContent>
+            <ScaleDriversForm onScaleFactorChange={setScaleFactorSum} />
+          </CardContent>
+        </Card>
+      );
+    }
+    
+    if (modelType === 'cocomo81') {
+      return (
+        <Tabs defaultValue="costDrivers" className="w-full">
+          {useDetailedCosts && (
+            <TabsList className="">
+              <TabsTrigger value="costDrivers">conduictores de costo</TabsTrigger>
+              <TabsTrigger value="detailedCosts">Costos detallados</TabsTrigger>
+            </TabsList>
+          )}
 
-        <TabsContent value="costDrivers">
-          <Card className="shadow-sm border-0">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-base">Conductores de Costo</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <CostDriversTable onEafChange={setEaf} />
-            </CardContent>
-          </Card>
-        </TabsContent>
+          <TabsContent value="costDrivers">
+            <Card className="shadow-sm border-0">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-base">Conductores de Costo</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <CostDriversTable onEafChange={setEaf} />
+              </CardContent>
+            </Card>
+          </TabsContent>
 
-        <TabsContent value="detailedCosts">
-          <Card className="shadow-sm border-0">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-base"> Costos detallados </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <DetailedCostsComponent
-                detailedCosts={detailedCosts}
-                onDetailedCostChange={handleDetailedCostChange}
-                calculateAverageSalary={calculateAverageSalary}
-                getTotalPercentage={getTotalPercentage}
-              />
-            </CardContent>
-          </Card>
-        </TabsContent>
+          <TabsContent value="detailedCosts">
+            <Card className="shadow-sm border-0">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-base"> Costos detallados </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <DetailedCostsComponent
+                  detailedCosts={detailedCosts}
+                  onDetailedCostChange={handleDetailedCostChange}
+                  calculateAverageSalary={calculateAverageSalary}
+                  getTotalPercentage={getTotalPercentage}
+                />
+              </CardContent>
+            </Card>
+          </TabsContent>
 
-        <TabsContent value="functionpoints">
-          <Card className="shadow-sm border-0">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-base">Tipos de Funciones</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <FunctionTypes setWeight={setFunctionPointsWeight} />
-            </CardContent>
-          </Card>
-        </TabsContent>
+          <TabsContent value="functionpoints">
+            <Card className="shadow-sm border-0">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-base">Tipos de Funciones</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <FunctionTypes setWeight={setFunctionPointsWeight} />
+              </CardContent>
+            </Card>
+          </TabsContent>
 
-        <TabsContent value="usecasepoints">
-          <Card className="shadow-sm border-0">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-base">Conductores de Costo</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p>
-                Los conductores de costo para Puntos de Caso de Uso se
-                implementarán en una futura versión.
-              </p>
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
-    );
+          <TabsContent value="usecasepoints">
+            <Card className="shadow-sm border-0">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-base">Conductores de Costo</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p>
+                  Los conductores de costo para Puntos de Caso de Uso se
+                  implementarán en una futura versión.
+                </p>
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
+      );
+      }
+
+    
   };
 
   const renderResultsCards = () => {
