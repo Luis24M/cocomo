@@ -173,32 +173,32 @@ export default function CocomoCalculator() {
     }
   };
 
-const calculateCocomo2Results = (): void => {
-  if (modelType !== 'cocomo2') return;
-  
-  try {
-    const salary = useDetailedCosts
-      ? calculateAverageSalary()
-      : developerSalary;
-    
-    const newResults = calculateCocomo2({
-      size,
-      scaleFactorSum,
-      eaf,
-      developerSalary: salary,
-    });
-    
-    console.log(newResults)
-    setResults(newResults);
-    
-    if (useDetailedCosts) {
-      calculatePhaseResults();
+  const calculateCocomo2Results = (): void => {
+    if (modelType !== 'cocomo2') return;
+
+    try {
+      const salary = useDetailedCosts
+        ? calculateAverageSalary()
+        : developerSalary;
+
+      const newResults = calculateCocomo2({
+        size,
+        scaleFactorSum,
+        eaf,
+        developerSalary: salary,
+      });
+
+      console.log(newResults);
+      setResults(newResults);
+
+      if (useDetailedCosts) {
+        calculatePhaseResults();
+      }
+    } catch (error) {
+      console.error('Error calculating COCOMO II results:', error);
+      toast.error('Error calculating COCOMO II results');
     }
-  } catch (error) {
-    console.error('Error calculating COCOMO II results:', error);
-    toast.error('Error calculating COCOMO II results');
-  }
-};
+  };
 
   const calculateFunctionPointsResults = (): void => {
     try {
@@ -289,17 +289,17 @@ const calculateCocomo2Results = (): void => {
   ]);
 
   useEffect(() => {
-  if (modelType === 'cocomo2') {
-    calculateCocomo2Results();
-  }
-}, [
-  size,
-  scaleFactorSum,
-  eaf,
-  developerSalary,
-  detailedCosts,
-  useDetailedCosts,
-]);
+    if (modelType === 'cocomo2') {
+      calculateCocomo2Results();
+    }
+  }, [
+    size,
+    scaleFactorSum,
+    eaf,
+    developerSalary,
+    detailedCosts,
+    useDetailedCosts,
+  ]);
 
   useEffect(() => {
     // Calculate Function Points results when parameters change
@@ -328,7 +328,8 @@ const calculateCocomo2Results = (): void => {
             showCostDrivers={false}
           />
         )}
-        {modelType === 'cocomo2' && <Cocomo2Form 
+        {modelType === 'cocomo2' && (
+          <Cocomo2Form
             kloc={size}
             setKloc={setSize}
             developerSalary={developerSalary}
@@ -340,12 +341,15 @@ const calculateCocomo2Results = (): void => {
             calculateAverageSalary={calculateAverageSalary}
             getTotalPercentage={getTotalPercentage}
             showCostDrivers={false}
-             />}
-        {modelType === 'functionpoints' && <FunctionPointsForm setAdjustFactor={setAdjustFactor} setLdcValue={setFP} />}
-        {modelType === 'usecasepoints' && (
-          <UseCasePointsForm
           />
         )}
+        {modelType === 'functionpoints' && (
+          <FunctionPointsForm
+            setAdjustFactor={setAdjustFactor}
+            setLdcValue={setFP}
+          />
+        )}
+        {modelType === 'usecasepoints' && <UseCasePointsForm />}
       </CardContent>
     </Card>
   );
@@ -366,21 +370,36 @@ const calculateCocomo2Results = (): void => {
         </Card>
       );
     }
-    
+
+    if (modelType === 'functionpoints') {
+      return (
+        <Card className="shadow-sm border-0">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base">Tipos de Funciones</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <FunctionTypes  setWeight={setFunctionPointsWeight} />
+          </CardContent>
+        </Card>
+      );
+    }
+
     if (modelType === 'cocomo81') {
       return (
-        <Tabs defaultValue="costDrivers" className="w-full">
-          {useDetailedCosts && (
-            <TabsList className="">
-              <TabsTrigger value="costDrivers">conduictores de costo</TabsTrigger>
+        <Tabs defaultValue="costDrivers"  className="w-full">
+          <TabsList className="">
+            <TabsTrigger value="costDrivers">conduictores de costo</TabsTrigger>
+            {useDetailedCosts && (
               <TabsTrigger value="detailedCosts">Costos detallados</TabsTrigger>
-            </TabsList>
-          )}
+            )}
+          </TabsList>
 
           <TabsContent value="costDrivers">
             <Card className="shadow-sm border-0">
               <CardHeader className="pb-2">
-                <CardTitle className="text-base">Conductores de Costo</CardTitle>
+                <CardTitle className="text-base">
+                  Conductores de Costo
+                </CardTitle>
               </CardHeader>
               <CardContent>
                 <CostDriversTable onEafChange={setEaf} />
@@ -403,36 +422,9 @@ const calculateCocomo2Results = (): void => {
               </CardContent>
             </Card>
           </TabsContent>
-
-          <TabsContent value="functionpoints">
-            <Card className="shadow-sm border-0">
-              <CardHeader className="pb-2">
-                <CardTitle className="text-base">Tipos de Funciones</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <FunctionTypes setWeight={setFunctionPointsWeight} />
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          <TabsContent value="usecasepoints">
-            <Card className="shadow-sm border-0">
-              <CardHeader className="pb-2">
-                <CardTitle className="text-base">Conductores de Costo</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p>
-                  Los conductores de costo para Puntos de Caso de Uso se
-                  implementarán en una futura versión.
-                </p>
-              </CardContent>
-            </Card>
-          </TabsContent>
         </Tabs>
       );
-      }
-
-    
+    }
   };
 
   const renderResultsCards = () => {
