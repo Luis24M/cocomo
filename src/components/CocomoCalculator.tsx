@@ -24,10 +24,18 @@ import {
 import { useResultadosEtapasStore } from '@/hooks/useResultadosEtapas';
 import FunctionTypes from './functionpoints/FunctionTypes';
 import ResultsFunctionPoints from './ResultsFunctionPoints';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
+import DetailedCostsComponent from './cocomo81/DetailedCostsComponent';
+import UseCasePointsForm from './usecasepoints/UseCasePointsForm';
 
 // Constants
 const COCOMO_RESULTS_KEY = 'CocomoResults';
-const VALID_MODEL_TYPES = ['cocomo81', 'cocomo2', 'functionpoints'] as const;
+const VALID_MODEL_TYPES = [
+  'cocomo81',
+  'cocomo2',
+  'functionpoints',
+  'usecasepoints',
+] as const;
 type ValidModelType = (typeof VALID_MODEL_TYPES)[number];
 
 const COCOMO_CONSTANTS = {
@@ -66,6 +74,8 @@ export default function CocomoCalculator() {
     useState<DevelopmentMode>('organic');
   const [developerSalary, setDeveloperSalary] = useState<number>(5000);
   const [eaf, setEaf] = useState<number>(1.0);
+  const [activeDetailedCosts, setActiveDetailedCosts] =
+    useState<boolean>(false);
 
   // Function Points specific states
   const [functionPointsWeight, setFunctionPointsWeight] = useState<number>(0);
@@ -161,7 +171,7 @@ export default function CocomoCalculator() {
       const result = calculateFunctionPoints(
         FP,
         adjustFactor,
-        functionPointsWeight,
+        functionPointsWeight
       );
       setResultFunctionPoints(result);
       setResults(null); // Clear COCOMO results if switching to Function Points
@@ -253,7 +263,7 @@ export default function CocomoCalculator() {
 
   // Render helpers
   const renderParametersCard = () => (
-    <Card className="shadow-sm border-0">
+    <Card className="shadow-sm border-0 w-full">
       <CardHeader className="pb-2">
         <CardTitle className="text-base">Parámetros</CardTitle>
       </CardHeader>
@@ -268,80 +278,110 @@ export default function CocomoCalculator() {
             setDeveloperSalary={setDeveloperSalary}
             useDetailedCosts={useDetailedCosts}
             setUseDetailedCosts={setUseDetailedCosts}
-            detailedCosts={detailedCosts}
-            onDetailedCostChange={handleDetailedCostChange}
-            calculateAverageSalary={calculateAverageSalary}
-            getTotalPercentage={getTotalPercentage}
             showCostDrivers={false}
           />
         )}
         {modelType === 'cocomo2' && <Cocomo2Form setResults={setResults} />}
-        {modelType === 'functionpoints' && <FunctionPointsForm setAdjustFactor={setAdjustFactor} setLdcValue={setFP} />}
+        {modelType === 'functionpoints' && (
+          <FunctionPointsForm
+            setAdjustFactor={setAdjustFactor}
+            setLdcValue={setFP}
+          />
+        )}
+        {modelType === 'usecasepoints' && (
+          <UseCasePointsForm
+          />
+        )}
       </CardContent>
     </Card>
   );
 
   const renderCostDriversCard = () => {
-    if (modelType === 'cocomo81') {
-      return (
-        <Card className="shadow-sm border-0">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-base">Conductores de Costo</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <CostDriversTable onEafChange={setEaf} />
-          </CardContent>
-        </Card>
-      );
-    }
-    if (modelType === 'cocomo2') {
-      return (
-                <Card className="shadow-sm border-0">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-base">Conductores de Costo</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <CostDriversTable onEafChange={setEaf} />
-          </CardContent>
-        </Card>
-      );
-    }
+    return (
+      <Tabs defaultValue="costDrivers" className="w-full">
+        {useDetailedCosts && (
+          <TabsList className="">
+            <TabsTrigger value="costDrivers">conduictores de costo</TabsTrigger>
+            <TabsTrigger value="detailedCosts">Costos detallados</TabsTrigger>
+          </TabsList>
+        )}
 
-    if (modelType === 'functionpoints') {
-      return (
-        <Card className="shadow-sm border-0">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-base">Tipos de Funciones</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <FunctionTypes  setWeight={setFunctionPointsWeight} />
-          </CardContent>
-        </Card>
-      );
-    }
+        <TabsContent value="costDrivers">
+          <Card className="shadow-sm border-0">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-base">Conductores de Costo</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <CostDriversTable onEafChange={setEaf} />
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="detailedCosts">
+          <Card className="shadow-sm border-0">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-base"> Costos detallados </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <DetailedCostsComponent
+                detailedCosts={detailedCosts}
+                onDetailedCostChange={handleDetailedCostChange}
+                calculateAverageSalary={calculateAverageSalary}
+                getTotalPercentage={getTotalPercentage}
+              />
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="functionpoints">
+          <Card className="shadow-sm border-0">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-base">Tipos de Funciones</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <FunctionTypes setWeight={setFunctionPointsWeight} />
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="usecasepoints">
+          <Card className="shadow-sm border-0">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-base">Conductores de Costo</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p>
+                Los conductores de costo para Puntos de Caso de Uso se
+                implementarán en una futura versión.
+              </p>
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
+    );
   };
 
   const renderResultsCards = () => {
-    if (results) 
-    return (
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        <div className="lg:col-span-1">
-          <ResultsDisplay
-            results={results}
-            showStages={false}
-            addResult={addResult}
-            clearResults={clearResults}
-          />
+    if (results)
+      return (
+        <div className="">
+          <div className="">
+            <ResultsDisplay
+              results={results}
+              showStages={false}
+              addResult={addResult}
+              clearResults={clearResults}
+            />
+          </div>
+          <div className="">
+            <ResultsDisplay
+              results={results}
+              showOnlyStages={true}
+              listResults={listResults}
+            />
+          </div>
         </div>
-        <div className="lg:col-span-2">
-          <ResultsDisplay
-            results={results}
-            showOnlyStages={true}
-            listResults={listResults}
-          />
-        </div>
-      </div>
-    );
+      );
 
     if (resultfunctionpoints) {
       return (
@@ -350,7 +390,10 @@ export default function CocomoCalculator() {
             <CardTitle className="text-base">Resultados</CardTitle>
           </CardHeader>
           <CardContent>
-            <ResultsFunctionPoints results={resultfunctionpoints} adjustmentFactor={adjustFactor} />
+            <ResultsFunctionPoints
+              results={resultfunctionpoints}
+              adjustmentFactor={adjustFactor}
+            />
           </CardContent>
         </Card>
       );
@@ -365,6 +408,8 @@ export default function CocomoCalculator() {
         return 'COCOMO II';
       case 'functionpoints':
         return 'PUNTOS DE FUNCIÓN';
+      case 'usecasepoints':
+        return 'PUNTOS DE CASO DE USO';
       default:
         return 'Calculadora';
     }
@@ -381,13 +426,15 @@ export default function CocomoCalculator() {
 
       <div className="space-y-4">
         {/* Parameters and Cost Drivers Row */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        <div className="space-y-4 ">
           {renderParametersCard()}
-          <div className="lg:col-span-2">{renderCostDriversCard()}</div>
+          <div className="flex justify-between items-start gap-4">
+            {renderCostDriversCard()}
+            {renderResultsCards()}
+          </div>
         </div>
 
         {/* Results Row */}
-        {renderResultsCards()}
       </div>
     </div>
   );

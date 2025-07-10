@@ -7,13 +7,13 @@ interface ModelCardProps {
   title: string;
   description: string;
   imageUrl: string;
-  modelType?: "cocomo81" | "cocomo2" | "functionpoints";
+  modelType?: "cocomo81" | "cocomo2" | "functionpoints" | "usecasepoints";
   intro?: string;
 }
 
 export default function ModelCard({ title, description, imageUrl, modelType, intro }: ModelCardProps) {
   return (
-    <Card className="card-hover overflow-hidden">
+    <Card className="card-hover overflow-hidden h-full drop-shadow-md hover:shadow-black ">
       {/* <div 
         className="h-32 bg-cover bg-center"
         style={{ backgroundImage: `url(${imageUrl})` }}
