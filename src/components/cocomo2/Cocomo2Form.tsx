@@ -11,8 +11,6 @@ import { PhaseData, DetailedCosts } from "@/utils/cocomoCalculations";
 interface Cocomo2FormProps {
   kloc?: number;
   setKloc?: (value: number) => void;
-  developmentMode?: DevelopmentMode;
-  setDevelopmentMode?: (value: DevelopmentMode) => void;
   developerSalary?: number;
   setDeveloperSalary?: (value: number) => void;
   useDetailedCosts?: boolean;
@@ -30,8 +28,6 @@ interface Cocomo2FormProps {
 export default function Cocomo2Form({ 
   kloc = 10,
   setKloc,
-  developmentMode = "organic",
-  setDevelopmentMode,
   developerSalary = 5000,
   setDeveloperSalary,
   useDetailedCosts = false,
@@ -87,22 +83,6 @@ export default function Cocomo2Form({
             />
           </div>
           
-          <div className="space-y-2">
-            <Label htmlFor="mode" className="text-sm font-medium">Tipo de desarrollo</Label>
-            <Select 
-              value={developmentMode} 
-              onValueChange={(value) => setDevelopmentMode && setDevelopmentMode(value as DevelopmentMode)}
-            >
-              <SelectTrigger className="h-9">
-                <SelectValue placeholder="Seleccionar modo" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="organic">Orgánico</SelectItem>
-                <SelectItem value="semi-detached">Semi-independiente</SelectItem>
-                <SelectItem value="embedded">Empotrado</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
   
           <div className="space-y-4">
             <div className="flex items-center space-x-2">

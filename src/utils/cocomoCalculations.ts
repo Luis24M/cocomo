@@ -1,5 +1,6 @@
 // COCOMO 81 Models
 export type DevelopmentMode = "organic" | "semi-detached" | "embedded";
+
 export type Cocomo81Input = {
   kloc: number; // Thousand lines of code
   developmentMode: DevelopmentMode;
@@ -13,16 +14,13 @@ export type ScaleDrivers = {
   developmentFlexibility: number;
   architectureRiskResolution: number;
   teamCohesion: number;
-  processMaturiy: number;
+  processMaturity: number; // Fixed typo
 };
 
 export type Cocomo2Input = {
-  size: number; // Size in KLOC or Function Points
-  //scaleDrivers: ScaleDrivers; // no se usan aqui
-  //costDrivers: CostDrivers; // no se usan aqui
-  scaleFactorSum?:number;
+  size: number; // Size in KLOC
+  scaleFactorSum?: number;
   eaf?: number;
-  usesFunctionPoints: boolean;
   developerSalary?: number; // Monthly developer salary (optional)
 };
 
@@ -40,7 +38,7 @@ export type FunctionPointsResults = {
   unadjustedFunctionPoints: number; // Total unadjusted function points
   adjustedFunctionPoints: number; // Adjusted function points after applying the value adjustment factor
   linesOfCode: number; // Estimated lines of code based on function points
-}
+};
 
 export type DetailedCosts = {
   requirements: PhaseData;
@@ -48,7 +46,7 @@ export type DetailedCosts = {
   design: PhaseData;
   development: PhaseData;
   testing: PhaseData;
-}
+};
 
 export type PhaseData = {
   percentage: number;
@@ -58,15 +56,40 @@ export type PhaseData = {
   totalCost?: number; // Costo total calculado para esta fase
 };
 
+// Constants
+const COCOMO_81_CONSTANTS = {
+  organic: { a: 2.4, b: 1.05, c: 2.5, d: 0.38 },
+  "semi-detached": { a: 3.0, b: 1.12, c: 2.5, d: 0.35 },
+  embedded: { a: 3.6, b: 1.20, c: 2.5, d: 0.32 },
+} as const;
+
+// Validation functions
+function validatePositiveNumber(value: number, paramName: string): void {
+  if (value <= 0) {
+    throw new Error(`${paramName} must be greater than 0`);
+  }
+}
+
+function validateDevelopmentMode(mode: DevelopmentMode): void {
+  if (!Object.keys(COCOMO_81_CONSTANTS).includes(mode)) {
+    throw new Error(`Invalid development mode: ${mode}`);
+  }
+}
+
 // COCOMO 81 Calculations
-export function calculateCocomo81({ kloc, developmentMode, eaf = 1.0, developerSalary = 5000 }: Cocomo81Input): CocomoResults {
-  const constants = {
-    organic: { a: 2.4, b: 1.05, c: 2.5, d: 0.38 },
-    "semi-detached": { a: 3.0, b: 1.12, c: 2.5, d: 0.35 },
-    embedded: { a: 3.6, b: 1.20, c: 2.5, d: 0.32 },
-  };
+export function calculateCocomo81({ 
+  kloc, 
+  developmentMode, 
+  eaf = 1.0, 
+  developerSalary = 5000 
+}: Cocomo81Input): CocomoResults {
+  // Input validation
+  validatePositiveNumber(kloc, "KLOC");
+  validatePositiveNumber(eaf, "EAF");
+  validatePositiveNumber(developerSalary, "Developer salary");
+  validateDevelopmentMode(developmentMode);
   
-  const { a, b, c, d } = constants[developmentMode];
+  const { a, b, c, d } = COCOMO_81_CONSTANTS[developmentMode];
   
   // Calculate effort in person-months
   const effort = a * Math.pow(kloc, b) * eaf;
@@ -91,19 +114,22 @@ export function calculateCocomo81({ kloc, developmentMode, eaf = 1.0, developerS
 }
 
 // COCOMO II Calculations
-export function calculateCocomo2({ size, scaleFactorSum, eaf = 1.0 , usesFunctionPoints, developerSalary = 5000 }: Cocomo2Input): CocomoResults {
-  // Convert function points to KLOC if needed (simplified conversion)
-  const sizeInKLOC = usesFunctionPoints ? size * 0.1 : size;
+export function calculateCocomo2({ 
+  size, 
+  scaleFactorSum = 0, 
+  eaf = 1.0, 
+  developerSalary = 5000 
+}: Cocomo2Input): CocomoResults {
+  // Input validation
+  validatePositiveNumber(size, "Size");
+  validatePositiveNumber(eaf, "EAF");
+  validatePositiveNumber(developerSalary, "Developer salary");
   
   // Calculate scale factor
-  //const scaleFactorSum = Object.values(scaleDrivers).reduce((sum, value) => sum + value, 0);
   const scaleFactor = 0.91 + 0.01 * scaleFactorSum;
   
-  // Calculate Effort Multiplier (EM)
-  //const effortMultiplier = Object.values(costDrivers).reduce((product, value) => product * value, 1.0);
-  
   // Calculate effort
-  const effort = 2.94 * Math.pow(sizeInKLOC, scaleFactor) * eaf;
+  const effort = 2.94 * Math.pow(size, scaleFactor) * eaf;
   
   // Calculate duration
   const durationExponent = 0.33 + 0.2 * (scaleFactor - 1.01);
@@ -115,8 +141,6 @@ export function calculateCocomo2({ size, scaleFactorSum, eaf = 1.0 , usesFunctio
   // Calculate costs
   const totalCost = effort * developerSalary;
   const costPerMonth = totalCost / duration;
-  
-  console.log(totalCost, costPerMonth)
 
   return {
     effort: parseFloat(effort.toFixed(2)),
@@ -127,14 +151,39 @@ export function calculateCocomo2({ size, scaleFactorSum, eaf = 1.0 , usesFunctio
   };
 }
 
-// Default values for COCOMO II
+// Function Points calculation - CORRECTED
+export function calculateFunctionPoints(
+  conversionFactor: number,        // Factor de conversión FP a LOC (típicamente 50-150)
+  valueAdjustmentFactor: number,   // Factor de ajuste de valor (0.65 - 1.35)
+  totalUnadjustedFP: number        // Total de puntos función sin ajustar
+): FunctionPointsResults {
+  // Input validation
+  validatePositiveNumber(conversionFactor, "Conversion factor");
+  validatePositiveNumber(totalUnadjustedFP, "Total unadjusted function points");
+  
+  if (valueAdjustmentFactor < 0.65 || valueAdjustmentFactor > 1.35) {
+    throw new Error("Value adjustment factor must be between 0.65 and 1.35");
+  }
+
+  const unadjustedFunctionPoints = totalUnadjustedFP;
+  const adjustedFunctionPoints = unadjustedFunctionPoints * valueAdjustmentFactor;
+  const linesOfCode = adjustedFunctionPoints * conversionFactor;
+
+  return {
+    unadjustedFunctionPoints: parseFloat(unadjustedFunctionPoints.toFixed(2)),
+    adjustedFunctionPoints: parseFloat(adjustedFunctionPoints.toFixed(2)),
+    linesOfCode: parseFloat(linesOfCode.toFixed(2))
+  };
+}
+
+// Default values for COCOMO II (si se necesitan en el futuro)
 export const defaultCocomo2Values = {
   scaleDrivers: {
     precedentedness: 3.72,
     developmentFlexibility: 3.04,
     architectureRiskResolution: 3.29,
     teamCohesion: 3.12,
-    processMaturiy: 3.12
+    processMaturity: 3.12 // Fixed typo
   },
   costDrivers: {
     rely: 1.0,
@@ -157,14 +206,7 @@ export const defaultCocomo2Values = {
   }
 };
 
-// Function to calculate Function Points from KLOC
-export function calculateFunctionPoints(FP: number, adjustFactor: number, functionPointsWeight: number): FunctionPointsResults {
-  const adjustedFunctionPoints = functionPointsWeight * adjustFactor;
-  const linesOfCode = functionPointsWeight * FP ;
-
-  return {
-    unadjustedFunctionPoints: functionPointsWeight,
-    adjustedFunctionPoints: adjustedFunctionPoints,
-    linesOfCode: linesOfCode
-  };
+// Utility function to round results consistently
+export function roundResult(value: number, decimals: number = 2): number {
+  return parseFloat(value.toFixed(decimals));
 }

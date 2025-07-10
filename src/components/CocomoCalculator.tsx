@@ -70,7 +70,8 @@ export default function CocomoCalculator() {
   const [eaf, setEaf] = useState<number>(1.0);
 
   // COMO 2 STATES
-  const [sf, setsf] = useState<number>(1.0);
+  const [size, setSize] = useState<number>(5000);
+  const [scaleFactorSum, setScaleFactorSum] = useState<number>(1.0);
 
   // Function Points specific states
   const [functionPointsWeight, setFunctionPointsWeight] = useState<number>(0);
@@ -161,31 +162,31 @@ export default function CocomoCalculator() {
     }
   };
 
-  const calculateCocomo2 = ():void =>{
-    if (modelType !== 'cocomo2') return;
-        try {
-      const salary = useDetailedCosts
-        ? calculateAverageSalary()
-        : developerSalary;
-
-      const newResults = calculateCocomo2({
-        kloc,
-        developmentMode,
-        eaf,
-        developerSalary: salary,
-      });
-
-      // Add phase information if using detailed costs
-      if (useDetailedCosts) {
-        calculatePhaseResults();
-      }
-
-      //setResults(newResults);
-    } catch (error) {
-      console.error('Error calculating COCOMO II results:', error);
-      toast.error('Error calculating COCOMO II results');
+const calculateCocomo2Results = (): void => {
+  if (modelType !== 'cocomo2') return;
+  
+  try {
+    const salary = useDetailedCosts
+      ? calculateAverageSalary()
+      : developerSalary;
+    
+    const newResults = calculateCocomo2({
+      size,
+      scaleFactorSum,
+      eaf,
+      developerSalary: salary,
+    });
+    
+    setResults(newResults);
+    
+    if (useDetailedCosts) {
+      calculatePhaseResults();
     }
+  } catch (error) {
+    console.error('Error calculating COCOMO II results:', error);
+    toast.error('Error calculating COCOMO II results');
   }
+};
 
   const calculateFunctionPointsResults = (): void => {
     try {
@@ -276,6 +277,19 @@ export default function CocomoCalculator() {
   ]);
 
   useEffect(() => {
+  if (modelType === 'cocomo2') {
+    calculateCocomo2Results();
+  }
+}, [
+  size,
+  scaleFactorSum,
+  eaf,
+  developerSalary,
+  detailedCosts,
+  useDetailedCosts,
+]);
+
+  useEffect(() => {
     // Calculate Function Points results when parameters change
     if (modelType === 'functionpoints') {
       calculateFunctionPointsResults();
@@ -309,8 +323,6 @@ export default function CocomoCalculator() {
         {modelType === 'cocomo2' && <Cocomo2Form 
             kloc={kloc}
             setKloc={setKloc}
-            developmentMode={developmentMode}
-            setDevelopmentMode={setDevelopmentMode}
             developerSalary={developerSalary}
             setDeveloperSalary={setDeveloperSalary}
             useDetailedCosts={useDetailedCosts}
@@ -341,7 +353,7 @@ export default function CocomoCalculator() {
     }
     if (modelType === 'cocomo2') {
       return (
-               <Card className="shadow-sm border-0">
+        <Card className="shadow-sm border-0">
           <CardHeader className="pb-2">
             <CardTitle className="text-base">Conductores de Costo</CardTitle>
           </CardHeader>
@@ -349,7 +361,7 @@ export default function CocomoCalculator() {
             <CostDriversTable onEafChange={setEaf} />
           </CardContent>
           <CardContent>
-            <ScaleDriversForm onScaleFactorChange={setsf} />
+            <ScaleDriversForm onScaleFactorChange={setScaleFactorSum} />
           </CardContent>
         </Card>
       );
