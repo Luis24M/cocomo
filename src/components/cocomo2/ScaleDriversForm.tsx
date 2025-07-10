@@ -74,6 +74,8 @@ export default function ScaleDriversForm({ onScaleFactorChange, showScaleFactor 
   });
 
   const scaleFactor = Object.values(scaleDrivers).reduce((sum, val) => sum + val, 0);
+  const B = 0.91;
+  const exponent = B + 0.01 * scaleFactor;
 
   useEffect(() => {
     onScaleFactorChange(scaleFactor);
@@ -130,10 +132,9 @@ export default function ScaleDriversForm({ onScaleFactorChange, showScaleFactor 
 
       {showScaleFactor && (
         <div className="mt-6 border rounded-lg p-4 bg-gray-50 shadow-sm">
-          <h4 className="text-sm font-semibold mb-2">Factor de escala (∑SFj)</h4>
-          <p className="text-base font-mono text-blue-600">
-            ∑SFj = {scaleFactor.toFixed(2)}
-          </p>
+          <h4 className="text-sm font-semibold mb-2">Resultados</h4>
+          <p className="text-sm font-medium">∑SFj = <span className="font-mono text-blue-600">{scaleFactor.toFixed(2)}</span></p>
+          <p className="text-sm font-medium">Exponente E = B + 0.01 × ∑SFj = <span className="font-mono text-green-600">{exponent.toFixed(3)}</span></p>
         </div>
       )}
     </div>

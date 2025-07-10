@@ -11,6 +11,7 @@ import ModelSelector from './ModelSelector';
 import CostDriversTable from './cocomo81/CostDriversTable';
 import FunctionPointsForm from './functionpoints/FunctionPointsForm';
 import ScaleDriversForm from './cocomo2/ScaleDriversForm';
+import CostDriversTable2 from './cocomo2/CostDriversTable2';
 
 // Types and Utils
 import {
@@ -71,7 +72,7 @@ export default function CocomoCalculator() {
 
   // COMO 2 STATES
   const [size, setSize] = useState<number>(5000);
-  const [scaleFactorSum, setScaleFactorSum] = useState<number>(1.0);
+  const [scaleFactorSum, setScaleFactorSum] = useState<number>(0.0);
 
   // Function Points specific states
   const [functionPointsWeight, setFunctionPointsWeight] = useState<number>(0);
@@ -177,6 +178,7 @@ const calculateCocomo2Results = (): void => {
       developerSalary: salary,
     });
     
+    console.log(newResults)
     setResults(newResults);
     
     if (useDetailedCosts) {
@@ -321,8 +323,8 @@ const calculateCocomo2Results = (): void => {
           />
         )}
         {modelType === 'cocomo2' && <Cocomo2Form 
-            kloc={kloc}
-            setKloc={setKloc}
+            kloc={size}
+            setKloc={setSize}
             developerSalary={developerSalary}
             setDeveloperSalary={setDeveloperSalary}
             useDetailedCosts={useDetailedCosts}
@@ -358,7 +360,7 @@ const calculateCocomo2Results = (): void => {
             <CardTitle className="text-base">Conductores de Costo</CardTitle>
           </CardHeader>
           <CardContent>
-            <CostDriversTable onEafChange={setEaf} />
+            <CostDriversTable2 onEafChange={setEaf} />
           </CardContent>
           <CardContent>
             <ScaleDriversForm onScaleFactorChange={setScaleFactorSum} />

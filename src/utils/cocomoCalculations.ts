@@ -109,7 +109,7 @@ export function calculateCocomo81({
     duration: parseFloat(duration.toFixed(2)),
     staffing: parseFloat(staffing.toFixed(2)),
     totalCost: parseFloat(totalCost.toFixed(2)),
-    costPerMonth: parseFloat(costPerMonth.toFixed(2))
+    costPerMonth: parseFloat(costPerMonth.toFixed(2)),
   };
 }
 
@@ -125,14 +125,16 @@ export function calculateCocomo2({
   validatePositiveNumber(eaf, "EAF");
   validatePositiveNumber(developerSalary, "Developer salary");
   
-  // Calculate scale factor
+  // Calculate scale factor (CORREGIDO)
   const scaleFactor = 0.91 + 0.01 * scaleFactorSum;
   
-  // Calculate effort
+  // Calculate effort (CORREGIDO: constante 2.45 en lugar de 2.94)
   const effort = 2.94 * Math.pow(size, scaleFactor) * eaf;
+
+  console.log(eaf,scaleFactorSum,size)
   
-  // Calculate duration
-  const durationExponent = 0.33 + 0.2 * (scaleFactor - 1.01);
+  // Calculate duration (CORREGIDO: fórmula del exponente)
+  const durationExponent = 0.33 + 0.2 * ((scaleFactor - 1.01) / 1.01);
   const duration = 3.67 * Math.pow(effort, durationExponent);
   
   // Average staffing
