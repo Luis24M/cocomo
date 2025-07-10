@@ -1,13 +1,7 @@
 import { Label } from '@radix-ui/react-label';
 import React, { useState, ChangeEvent, useEffect } from 'react';
 import { useForm, FormProvider } from 'react-hook-form';
-import {
-  FormErrorMessage,
-  FormLabel,
-  FormField,
-  FormItem,
-  FormControl,
-} from '../ui/form';
+import { FormErrorMessage, FormField } from '../ui/form';
 import { Input } from '../ui/input';
 import { Button } from '../ui/button';
 import {
@@ -88,23 +82,25 @@ function FunctionPointsFormInner({
   }, [setLdcValue, selectedLanguage]);
 
   return (
-    <div>
-      <div className="flex items-center justify-between mb-4">
-        <Label>Lenguaje de programación</Label>
-      </div>
+    <div className="flex gap-4">
+      <div>
+        <div className="flex items-center justify-between mb-1">
+          <Label>Lenguaje de programación</Label>
+        </div>
 
-      <select
-        value={selectedLanguage}
-        onChange={handleLanguageChange}
-        className="w-full py-2 my-2 border rounded"
-      >
-        {Object.keys(ldcValues).map((language) => (
-          <option key={language} value={language}>
-            {language}{' '}
-            {language !== 'Default' ? `(${ldcValues[language]} LOC/FP)` : ''}
-          </option>
-        ))}
-      </select>
+        <select
+          value={selectedLanguage}
+          onChange={handleLanguageChange}
+          className="w-full py-2 my-2 border rounded"
+        >
+          {Object.keys(ldcValues).map((language) => (
+            <option key={language} value={language}>
+              {language}{' '}
+              {language !== 'Default' ? `(${ldcValues[language]} LOC/FP)` : ''}
+            </option>
+          ))}
+        </select>
+      </div>
 
       <FormField
         name="adjustmentFactor"
@@ -127,31 +123,33 @@ function FunctionPointsFormInner({
           },
         }}
         render={({ field }) => (
-          <div className="mt-4 space-y-3">
-            <Label>Factor de Ajuste (0.65 - 1.35)</Label>
-            <Input
-              type="number"
-              step="0.01"
-              min="0.65"
-              max="1.35"
-              placeholder="1.0"
-              className="mt-2"
-              {...field}
-              onChange={(e) => {
-                let value = Number(e.target.value);
+          <div className="flex gap-4 items-center">
+            <div>
+              <Label>Factor de Ajuste (0.65 - 1.35)</Label>
+              <Input
+                type="number"
+                step="0.01"
+                min="0.65"
+                max="1.35"
+                placeholder="1.0"
+                className="mt-2"
+                {...field}
+                onChange={(e) => {
+                  let value = Number(e.target.value);
 
-                // Validar y limitar el valor dentro del rango
-                if (value < 0.65) {
-                  value = 0.65;
-                } else if (value > 1.35) {
-                  value = 1.35;
-                }
+                  // Validar y limitar el valor dentro del rango
+                  if (value < 0.65) {
+                    value = 0.65;
+                  } else if (value > 1.35) {
+                    value = 1.35;
+                  }
 
-                field.onChange(value);
-                setAdjustFactor(value);
-              }}
-            />
-            <FormErrorMessage />
+                  field.onChange(value);
+                  setAdjustFactor(value);
+                }}
+              />
+              <FormErrorMessage />
+            </div>
             <Dialog>
               <DialogTrigger asChild>
                 <Button variant="outline" size="sm" className="gap-2">

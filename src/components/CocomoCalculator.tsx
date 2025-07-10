@@ -68,7 +68,11 @@ export default function CocomoCalculator() {
   // State
   const [results, setResults] = useState<CocomoResults | null>(null);
   const [resultfunctionpoints, setResultFunctionPoints] =
-    useState<FunctionPointsResults | null>(null);
+    useState<FunctionPointsResults | null>({
+      unadjustedFunctionPoints: 0,
+      adjustedFunctionPoints: 0,
+      linesOfCode: 0,
+    });
   const [listResults, setListResults] = useState<CocomoResults[]>([]);
 
   // COCOMO 81 specific states
@@ -88,6 +92,13 @@ export default function CocomoCalculator() {
   const [functionPointsWeight, setFunctionPointsWeight] = useState<number>(0);
   const [FP, setFP] = useState<number>(0);
   const [adjustFactor, setAdjustFactor] = useState<number>(1.0);
+
+  // Use Case Points specific states
+  const [useCasePoints, setUseCasePoints] = useState<number>(0);
+  const [uawValue, setUawValue] = useState<number>(0);
+  const [uucwValue, setUucwValue] = useState<number>(0);
+  const [tcfValue, setTcfValue] = useState<number>(0);
+  const [ecfValue, setEcfValue] = useState<number>(0);
 
   // Utility functions
   const isValidModelType = (type: string): type is ValidModelType => {
@@ -335,12 +346,7 @@ export default function CocomoCalculator() {
             developerSalary={developerSalary}
             setDeveloperSalary={setDeveloperSalary}
             useDetailedCosts={useDetailedCosts}
-            setUseDetailedCosts={setUseDetailedCosts}
-            detailedCosts={detailedCosts}
-            onDetailedCostChange={handleDetailedCostChange}
-            calculateAverageSalary={calculateAverageSalary}
-            getTotalPercentage={getTotalPercentage}
-            showCostDrivers={false}
+            setUseDetailedCosts={setUseDetailedCosts} 
           />
         )}
         {modelType === 'functionpoints' && (
@@ -349,7 +355,15 @@ export default function CocomoCalculator() {
             setLdcValue={setFP}
           />
         )}
-        {modelType === 'usecasepoints' && <UseCasePointsForm />}
+        {modelType === 'usecasepoints' && (
+          <UseCasePointsForm
+            setUcpValue={setUseCasePoints}
+            setUawValue={setUawValue}
+            setUucwValue={setUucwValue}
+            setTcfValue={setTcfValue}
+            setEcfValue={setEcfValue}
+          />
+        )}
       </CardContent>
     </Card>
   );
@@ -357,17 +371,57 @@ export default function CocomoCalculator() {
   const renderCostDriversCard = () => {
     if (modelType === 'cocomo2') {
       return (
-        <Card className="shadow-sm border-0">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-base">Conductores de Costo</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <CostDriversTable2 onEafChange={setEaf} />
-          </CardContent>
-          <CardContent>
-            <ScaleDriversForm onScaleFactorChange={setScaleFactorSum} />
-          </CardContent>
-        </Card>
+        <Tabs defaultValue="costDrivers" className="w-full">
+          <TabsList className="">
+            <TabsTrigger value="costDrivers">Conductores de Costo</TabsTrigger>
+            <TabsTrigger value="scaleDrivers">Factores de Escala</TabsTrigger>
+            {useDetailedCosts && (
+              <TabsTrigger value="detailedCosts">Costos detallados</TabsTrigger>
+            )}
+          </TabsList>
+
+          <TabsContent value="costDrivers">
+            <Card className="shadow-sm border-0">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-base">
+                  Conductores de Costo
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <CostDriversTable2 onEafChange={setEaf} />
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="scaleDrivers">
+            <Card className="shadow-sm border-0">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-base">Factores de Escala</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <ScaleDriversForm onScaleFactorChange={setScaleFactorSum} />
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {useDetailedCosts && (
+            <TabsContent value="detailedCosts">
+              <Card className="shadow-sm border-0">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-base">Costos detallados</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <DetailedCostsComponent
+                    detailedCosts={detailedCosts}
+                    onDetailedCostChange={handleDetailedCostChange}
+                    calculateAverageSalary={calculateAverageSalary}
+                    getTotalPercentage={getTotalPercentage}
+                  />
+                </CardContent>
+              </Card>
+            </TabsContent>
+          )}
+        </Tabs>
       );
     }
 
@@ -378,7 +432,7 @@ export default function CocomoCalculator() {
             <CardTitle className="text-base">Tipos de Funciones</CardTitle>
           </CardHeader>
           <CardContent>
-            <FunctionTypes  setWeight={setFunctionPointsWeight} />
+            <FunctionTypes setWeight={setFunctionPointsWeight} />
           </CardContent>
         </Card>
       );
@@ -386,9 +440,9 @@ export default function CocomoCalculator() {
 
     if (modelType === 'cocomo81') {
       return (
-        <Tabs defaultValue="costDrivers"  className="w-full">
+        <Tabs defaultValue="costDrivers" className="w-full">
           <TabsList className="">
-            <TabsTrigger value="costDrivers">conduictores de costo</TabsTrigger>
+            <TabsTrigger value="costDrivers">conductores de costo</TabsTrigger>
             {useDetailedCosts && (
               <TabsTrigger value="detailedCosts">Costos detallados</TabsTrigger>
             )}

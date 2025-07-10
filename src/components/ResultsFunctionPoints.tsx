@@ -13,7 +13,7 @@ export default function ResultsFunctionPoints({
   return (
     <div className="space-y-6">
       <div className="border rounded-lg p-6 bg-white shadow-sm">
-        <div className="flex gap-6 justify-around">
+        <div className=" gap-6 justify-around">
           {/* Columna izquierda */}
             <div className="space-y-2">
               <Label className="text-sm font-medium text-gray-700">
