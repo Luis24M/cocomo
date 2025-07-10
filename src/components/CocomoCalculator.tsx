@@ -503,7 +503,7 @@ export default function CocomoCalculator() {
         </div>
       );
 
-    if (resultfunctionpoints) {
+    if (resultfunctionpoints && modelType === 'functionpoints') {
       return (
         <Card className="shadow-sm border-0">
           <CardHeader className="pb-2">
