@@ -8,6 +8,26 @@ export type Cocomo81Input = {
   developerSalary?: number; // Monthly developer salary (optional)
 };
 
+export type CostDrivers = {
+  rely: number; // Required Software Reliability
+  data: number; // Database Size
+  cplx: number; // Product Complexity
+  ruse: number; // Developed for Reusability
+  docu: number; // Documentation Match to Life-cycle Needs
+  time: number; // Execution Time Constraint
+  stor: number; // Main Storage Constraint
+  pvol: number; // Platform Volatility
+  acap: number; // Analyst Capability
+  pcap: number; // Programmer Capability
+  pcon: number; // Personnel Continuity
+  apex: number; // Applications Experience
+  plex: number; // Platform Experience
+  ltex: number; // Language and Tool Experience
+  tool: number; // Use of Software Tools
+  site: number; // Multisite Development
+  sced: number; // Required Development Schedule
+};
+
 // COCOMO II Models
 export type ScaleDrivers = {
   precedentedness: number;
@@ -125,22 +145,24 @@ export function calculateCocomo2({
   validatePositiveNumber(eaf, "EAF");
   validatePositiveNumber(developerSalary, "Developer salary");
   
-  // Calculate scale factor (CORREGIDO)
+  // Calculate scale factor - mantener precisión completa
   const scaleFactor = 0.91 + 0.01 * scaleFactorSum;
   
-  // Calculate effort (CORREGIDO: constante 2.45 en lugar de 2.94)
+  // Calculate effort - mantener precisión completa durante el cálculo
   const effort = 2.94 * Math.pow(size, scaleFactor) * eaf;
 
-  console.log(eaf,scaleFactorSum,size)
+  console.log(eaf, scaleFactorSum, size);
+  console.log('Scale Factor (precisión completa):', scaleFactor);
+  console.log('Effort (precisión completa):', effort);
   
-  // Calculate duration (CORREGIDO: fórmula del exponente)
+  // Calculate duration - mantener precisión completa
   const durationExponent = 0.33 + 0.2 * ((scaleFactor - 1.01) / 1.01);
   const duration = 3.67 * Math.pow(effort, durationExponent);
   
-  // Average staffing
+  // Average staffing - mantener precisión completa
   const staffing = effort / duration;
   
-  // Calculate costs
+  // Calculate costs - mantener precisión completa
   const totalCost = effort * developerSalary;
   const costPerMonth = totalCost / duration;
 
@@ -151,8 +173,8 @@ export function calculateCocomo2({
     totalCost: parseFloat(totalCost.toFixed(2)),
     costPerMonth: parseFloat(costPerMonth.toFixed(2))
   };
-}
 
+}
 // Function Points calculation - CORRECTED
 export function calculateFunctionPoints(
   conversionFactor: number,        // Factor de conversión FP a LOC (típicamente 50-150)

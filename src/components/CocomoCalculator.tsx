@@ -207,7 +207,7 @@ export default function CocomoCalculator() {
       }
     } catch (error) {
       console.error('Error calculating COCOMO II results:', error);
-      toast.error('Error calculating COCOMO II results');
+      //toast.error('Error calculating COCOMO II results');
     }
   };
 
