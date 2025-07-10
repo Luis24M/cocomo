@@ -9,8 +9,8 @@ import {
 } from "@/components/ui/select";
 
 interface ScaleDriversFormProps {
-  onExponentChange: (exp: number) => void;
-  showExponent?: boolean;
+  onScaleFactorChange: (scaleFactor: number) => void;
+  showScaleFactor?: boolean;
 }
 
 type ScaleDrivers = {
@@ -64,7 +64,7 @@ const levelOptions = {
   ],
 };
 
-export default function ScaleDriversForm({ onExponentChange, showExponent = true }: ScaleDriversFormProps) {
+export default function ScaleDriversForm({ onScaleFactorChange, showScaleFactor = true }: ScaleDriversFormProps) {
   const [scaleDrivers, setScaleDrivers] = useState<ScaleDrivers>({
     precedentedness: 3.72,
     developmentFlexibility: 3.04,
@@ -73,13 +73,11 @@ export default function ScaleDriversForm({ onExponentChange, showExponent = true
     processMaturiy: 4.68,
   });
 
-  const total = Object.values(scaleDrivers).reduce((sum, val) => sum + val, 0);
-  const exponent = 0.91 + 0.01 * total;
+  const scaleFactor = Object.values(scaleDrivers).reduce((sum, val) => sum + val, 0);
 
-  // Comunicar al padre cada vez que el exponente cambie
   useEffect(() => {
-    onExponentChange(exponent);
-  }, [exponent, onExponentChange]);
+    onScaleFactorChange(scaleFactor);
+  }, [scaleFactor, onScaleFactorChange]);
 
   const handleChange = (key: keyof ScaleDrivers, value: number) => {
     setScaleDrivers(prev => ({ ...prev, [key]: value }));
@@ -130,11 +128,11 @@ export default function ScaleDriversForm({ onExponentChange, showExponent = true
         {renderSelect("Madurez del proceso", "processMaturiy", scaleDrivers.processMaturiy)}
       </div>
 
-      {showExponent && (
+      {showScaleFactor && (
         <div className="mt-6 border rounded-lg p-4 bg-gray-50 shadow-sm">
-          <h4 className="text-sm font-semibold mb-2">Exponente del esfuerzo (E)</h4>
+          <h4 className="text-sm font-semibold mb-2">Factor de escala (∑SFj)</h4>
           <p className="text-base font-mono text-blue-600">
-            E = 0.91 + 0.01 × {total.toFixed(2)} = <strong>{exponent.toFixed(3)}</strong>
+            ∑SFj = {scaleFactor.toFixed(2)}
           </p>
         </div>
       )}

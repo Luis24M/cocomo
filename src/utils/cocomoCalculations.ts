@@ -16,30 +16,11 @@ export type ScaleDrivers = {
   processMaturiy: number;
 };
 
-export type CostDrivers = {
-  rely: number; // Required Software Reliability
-  data: number; // Database Size
-  cplx: number; // Product Complexity
-  ruse: number; // Developed for Reusability
-  docu: number; // Documentation Match to Life-cycle Needs
-  time: number; // Execution Time Constraint
-  stor: number; // Main Storage Constraint
-  pvol: number; // Platform Volatility
-  acap: number; // Analyst Capability
-  pcap: number; // Programmer Capability
-  pcon: number; // Personnel Continuity
-  apex: number; // Applications Experience
-  plex: number; // Platform Experience
-  ltex: number; // Language and Tool Experience
-  tool: number; // Use of Software Tools
-  site: number; // Multisite Development
-  sced: number; // Required Development Schedule
-};
-
 export type Cocomo2Input = {
   size: number; // Size in KLOC or Function Points
-  scaleDrivers: ScaleDrivers;
-  //costDrivers: CostDrivers;
+  //scaleDrivers: ScaleDrivers; // no se usan aqui
+  //costDrivers: CostDrivers; // no se usan aqui
+  scaleFactorSum?:number;
   eaf?: number;
   usesFunctionPoints: boolean;
   developerSalary?: number; // Monthly developer salary (optional)
@@ -110,12 +91,12 @@ export function calculateCocomo81({ kloc, developmentMode, eaf = 1.0, developerS
 }
 
 // COCOMO II Calculations
-export function calculateCocomo2({ size, scaleDrivers, eaf = 1.0 , usesFunctionPoints, developerSalary = 5000 }: Cocomo2Input): CocomoResults {
+export function calculateCocomo2({ size, scaleFactorSum, eaf = 1.0 , usesFunctionPoints, developerSalary = 5000 }: Cocomo2Input): CocomoResults {
   // Convert function points to KLOC if needed (simplified conversion)
   const sizeInKLOC = usesFunctionPoints ? size * 0.1 : size;
   
   // Calculate scale factor
-  const scaleFactorSum = Object.values(scaleDrivers).reduce((sum, value) => sum + value, 0);
+  //const scaleFactorSum = Object.values(scaleDrivers).reduce((sum, value) => sum + value, 0);
   const scaleFactor = 0.91 + 0.01 * scaleFactorSum;
   
   // Calculate Effort Multiplier (EM)
@@ -174,35 +155,6 @@ export const defaultCocomo2Values = {
     site: 1.0,
     sced: 1.0
   }
-};
-
-// Constants and ranges for COCOMO II parameters
-export const scaleDriverRanges = {
-  precedentedness: { min: 0, max: 6, labels: ["Very High", "High", "Nominal", "Low", "Very Low"] },
-  developmentFlexibility: { min: 0, max: 6, labels: ["Very High", "High", "Nominal", "Low", "Very Low"] },
-  architectureRiskResolution: { min: 0, max: 6, labels: ["Very High", "High", "Nominal", "Low", "Very Low"] },
-  teamCohesion: { min: 0, max: 6, labels: ["Very High", "High", "Nominal", "Low", "Very Low"] },
-  processMaturiy: { min: 0, max: 6, labels: ["Very High", "High", "Nominal", "Low", "Very Low"] }
-};
-
-export const costDriverRanges = {
-  rely: { values: [0.75, 0.88, 1.00, 1.15, 1.39], labels: ["Very Low", "Low", "Nominal", "High", "Very High"] },
-  data: { values: [0.93, 1.00, 1.09, 1.19], labels: ["Low", "Nominal", "High", "Very High"] },
-  cplx: { values: [0.75, 0.88, 1.00, 1.15, 1.30, 1.66], labels: ["Very Low", "Low", "Nominal", "High", "Very High", "Extra High"] },
-  ruse: { values: [0.91, 1.00, 1.14, 1.29, 1.49], labels: ["Low", "Nominal", "High", "Very High", "Extra High"] },
-  docu: { values: [0.81, 0.91, 1.00, 1.11, 1.23], labels: ["Very Low", "Low", "Nominal", "High", "Very High"] },
-  time: { values: [1.00, 1.11, 1.29, 1.63], labels: ["Nominal", "High", "Very High", "Extra High"] },
-  stor: { values: [1.00, 1.05, 1.17, 1.46], labels: ["Nominal", "High", "Very High", "Extra High"] },
-  pvol: { values: [0.87, 1.00, 1.15, 1.30], labels: ["Low", "Nominal", "High", "Very High"] },
-  acap: { values: [1.42, 1.19, 1.00, 0.85, 0.71], labels: ["Very Low", "Low", "Nominal", "High", "Very High"] },
-  pcap: { values: [1.34, 1.15, 1.00, 0.88, 0.76], labels: ["Very Low", "Low", "Nominal", "High", "Very High"] },
-  pcon: { values: [1.29, 1.12, 1.00, 0.90, 0.81], labels: ["Very Low", "Low", "Nominal", "High", "Very High"] },
-  apex: { values: [1.22, 1.10, 1.00, 0.88, 0.81], labels: ["Very Low", "Low", "Nominal", "High", "Very High"] },
-  plex: { values: [1.19, 1.09, 1.00, 0.91, 0.85], labels: ["Very Low", "Low", "Nominal", "High", "Very High"] },
-  ltex: { values: [1.20, 1.09, 1.00, 0.91, 0.84], labels: ["Very Low", "Low", "Nominal", "High", "Very High"] },
-  tool: { values: [1.17, 1.09, 1.00, 0.90, 0.78], labels: ["Very Low", "Low", "Nominal", "High", "Very High"] },
-  site: { values: [1.22, 1.09, 1.00, 0.93, 0.86, 0.80], labels: ["Very Low", "Low", "Nominal", "High", "Very High", "Extra High"] },
-  sced: { values: [1.43, 1.14, 1.00, 1.00, 1.00], labels: ["Very Low", "Low", "Nominal", "High", "Very High"] }
 };
 
 // Function to calculate Function Points from KLOC

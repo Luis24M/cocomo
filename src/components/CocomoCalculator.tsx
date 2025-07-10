@@ -18,6 +18,7 @@ import {
   FunctionPointsResults,
   DevelopmentMode,
   calculateCocomo81,
+  calculateCocomo2,
   DetailedCosts,
   PhaseData,
   calculateFunctionPoints,
@@ -69,7 +70,7 @@ export default function CocomoCalculator() {
   const [eaf, setEaf] = useState<number>(1.0);
 
   // COMO 2 STATES
-  const [exponent, setExponent] = useState<number>(1.0);
+  const [sf, setsf] = useState<number>(1.0);
 
   // Function Points specific states
   const [functionPointsWeight, setFunctionPointsWeight] = useState<number>(0);
@@ -159,6 +160,32 @@ export default function CocomoCalculator() {
       toast.error('Error calculating COCOMO 81 results');
     }
   };
+
+  const calculateCocomo2 = ():void =>{
+    if (modelType !== 'cocomo2') return;
+        try {
+      const salary = useDetailedCosts
+        ? calculateAverageSalary()
+        : developerSalary;
+
+      const newResults = calculateCocomo2({
+        kloc,
+        developmentMode,
+        eaf,
+        developerSalary: salary,
+      });
+
+      // Add phase information if using detailed costs
+      if (useDetailedCosts) {
+        calculatePhaseResults();
+      }
+
+      //setResults(newResults);
+    } catch (error) {
+      console.error('Error calculating COCOMO II results:', error);
+      toast.error('Error calculating COCOMO II results');
+    }
+  }
 
   const calculateFunctionPointsResults = (): void => {
     try {
@@ -279,7 +306,21 @@ export default function CocomoCalculator() {
             showCostDrivers={false}
           />
         )}
-        {modelType === 'cocomo2' && <Cocomo2Form setResults={setResults} />}
+        {modelType === 'cocomo2' && <Cocomo2Form 
+            kloc={kloc}
+            setKloc={setKloc}
+            developmentMode={developmentMode}
+            setDevelopmentMode={setDevelopmentMode}
+            developerSalary={developerSalary}
+            setDeveloperSalary={setDeveloperSalary}
+            useDetailedCosts={useDetailedCosts}
+            setUseDetailedCosts={setUseDetailedCosts}
+            detailedCosts={detailedCosts}
+            onDetailedCostChange={handleDetailedCostChange}
+            calculateAverageSalary={calculateAverageSalary}
+            getTotalPercentage={getTotalPercentage}
+            showCostDrivers={false}
+             />}
         {modelType === 'functionpoints' && <FunctionPointsForm setAdjustFactor={setAdjustFactor} setLdcValue={setFP} />}
       </CardContent>
     </Card>
@@ -308,7 +349,7 @@ export default function CocomoCalculator() {
             <CostDriversTable onEafChange={setEaf} />
           </CardContent>
           <CardContent>
-            <ScaleDriversForm onExponentChange={setExponent} />
+            <ScaleDriversForm onScaleFactorChange={setsf} />
           </CardContent>
         </Card>
       );
